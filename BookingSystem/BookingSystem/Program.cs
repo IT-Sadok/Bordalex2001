@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace BookingSystem;
 
-namespace BookingSystem;
-
-class Program
+public class Program
 {
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
         var hosts = CreateHosts();
         DisplayHosts(hosts);
@@ -18,62 +15,67 @@ class Program
 
     private static List<Host> CreateHosts()
     {
-        return new List<Host>()
+        return new List<Host>
         {
-            new Host(1, "Host1")
-            {
-                Apartments = new List<Apartment>()
-                {
-                    new Apartment(1, "Apartment1"),
-                    new Apartment(2, "Apartment2"),
-                    new Apartment(3, "Apartment3"),
-                    new Apartment(4, "Apartment4"),
-                    new Apartment(5, "Apartment5"),
-                }
+            new() {
+                Id = 1,
+                Name = "Host1",
+                Apartments =
+                [
+                    new Apartment { Id = 1, Name = "Apartment1" },
+                    new Apartment { Id = 2, Name = "Apartment2" },
+                    new Apartment { Id = 3, Name = "Apartment3" },
+                    new Apartment { Id = 4, Name = "Apartment4" },
+                    new Apartment { Id = 5, Name = "Apartment5" }
+                ]
             },
-            new Host(2, "Host2")
-            {
-                Apartments = new List<Apartment>()
-                {
-                    new Apartment(6, "Apartment6"),
-                    new Apartment(7, "Apartment7"),
-                    new Apartment(8, "Apartment8"),
-                    new Apartment(9, "Apartment9"),
-                    new Apartment(10, "Apartment10"),
-                }
+            new() {
+                Id = 2,
+                Name = "Host2",
+                Apartments =
+                [
+                    new Apartment { Id = 6, Name = "Apartment6" },
+                    new Apartment { Id = 7, Name = "Apartment7" },
+                    new Apartment { Id = 8, Name = "Apartment8" },
+                    new Apartment { Id = 9, Name = "Apartment9" },
+                    new Apartment { Id = 10, Name = "Apartment10" }
+                ]
             },
-            new Host(3, "Host3")
-            {
-                Apartments = new List<Apartment>()
-                {
-                    new Apartment(11, "Apartment11"),
-                    new Apartment(12, "Apartment12"),
-                    new Apartment(13, "Apartment13"),
-                    new Apartment(14, "Apartment14"),
-                    new Apartment(15, "Apartment15"),
-                }
+            new() {
+                Id = 3,
+                Name = "Host3",
+                Apartments =
+                [
+                    new Apartment { Id = 11, Name = "Apartment11" },
+                    new Apartment { Id = 12, Name = "Apartment12" },
+                    new Apartment { Id = 13, Name = "Apartment13" },
+                    new Apartment { Id = 14, Name = "Apartment14" },
+                    new Apartment { Id = 15, Name = "Apartment15" }
+                ]
             },
-            new Host(4, "Host4")
-            {
-                Apartments = new List<Apartment>()
-                {
-                    new Apartment(16, "Apartment16"),
-                    new Apartment(17, "Apartment17"),
-                    new Apartment(18, "Apartment18"),
-                    new Apartment(19, "Apartment19"),
-                    new Apartment(20, "Apartment20"),
-                }
+            new() {
+                Id = 4,
+                Name = "Host4",
+                Apartments =
+                [
+                    new Apartment { Id = 16, Name = "Apartment16" },
+                    new Apartment { Id = 17, Name = "Apartment17" },
+                    new Apartment { Id = 18, Name = "Apartment18" },
+                    new Apartment { Id = 19, Name = "Apartment19" },
+                    new Apartment { Id = 20, Name = "Apartment20" }
+                ]
             },
-            new Host(5, "Host5")
-            {
-                Apartments = new List<Apartment>()
-                {
-                    new Apartment(21, "Apartment21"),
-                    new Apartment(22, "Apartment22"),
-                    new Apartment(23, "Apartment23"),
-                    new Apartment(24, "Apartment24"),
-                    new Apartment(25, "Apartment25"),
-                }
+            new() {
+                Id = 5,
+                Name = "Host5",
+                Apartments =
+                [
+                    new Apartment { Id = 21, Name = "Apartment21" },
+                    new Apartment { Id = 22, Name = "Apartment22" },
+                    new Apartment { Id = 23, Name = "Apartment23" },
+                    new Apartment { Id = 24, Name = "Apartment24" },
+                    new Apartment { Id = 25, Name = "Apartment25" }
+                ]
             }
         };
     }
@@ -95,11 +97,11 @@ class Program
             var host = hosts.Find(h => h.Id == id);
             if (host == null)
             {
-                Console.WriteLine($"Host not found");
+                Console.WriteLine("\nHost not found");
             }
             return host;
         }
-        Console.WriteLine("Invalid input. Please enter a valid host ID.");
+        Console.WriteLine("\nInvalid input. Please enter a valid host ID.");
         return null;
     }
 

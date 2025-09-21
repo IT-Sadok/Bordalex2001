@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BookingSystem;
+﻿namespace BookingSystem;
 
 public class Apartment
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    public Apartment(int id, string name)
-    {
-        Id = id;
-        Name = name;
-    }
 }
