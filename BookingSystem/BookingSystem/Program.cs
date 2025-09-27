@@ -7,8 +7,40 @@ public class Program
 
     public static void Main(string[] args)
     {
-        var hosts = CreateHosts();
-        DisplayHosts(hosts);
+        bool showMenu = true;
+        while (showMenu)
+        {
+            Console.WriteLine("\nBooking System Menu:");
+            Console.WriteLine("1. Create Hosts");
+            Console.WriteLine("2. Display Hosts");
+            Console.WriteLine("3. Edit Host");
+            Console.WriteLine("4. Delete Host");
+            Console.WriteLine("5. Exit");
+            Console.Write("\nChoose an option (1-5): ");
+            var choice = Console.ReadLine();
+            Console.WriteLine();
+            switch (choice)
+            {
+                case "1":
+                    CreateHosts();
+                    break;
+                case "2":
+                    DisplayHosts();
+                    break;
+                case "3":
+                    EditHost();
+                    break;
+                case "4":
+                    DeleteHost();
+                    break;
+                case "5":
+                    showMenu = false;
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice. Please choose a valid option.");
+                    break;
+            }
+        }
         /*var selectedHost = DisplayHostById(hosts);
         if (selectedHost != null)
         {
@@ -16,33 +48,23 @@ public class Program
         }*/
     }
 
-    private static List<Host> CreateHosts()
+    private static void CreateHosts()
     {
-        Console.Write("Enter the number of hosts to create: ");
-        if (int.TryParse(Console.ReadLine(), out var numberOfHosts) && numberOfHosts > 0)
+        Console.Write("Enter a host name: ");
+        var name = Console.ReadLine();
+        if (!string.IsNullOrWhiteSpace(name))
         {
-            for (var i = 0; i < numberOfHosts; i++)
-            {
-                id++;
-                Console.Write($"Enter the name for host {id}: ");
-                var name = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(name))
-                {
-                    hosts.Add(new Host { Id = id, Name = name });
-                }
-                else
-                {
-                    Console.WriteLine("Host name shouldn't be empty. Please try again.");
-                    i--;
-                }
-            }
-            return hosts;
+            var newHost = new Host { Id = ++id, Name = name };
+            hosts.Add(newHost);
+            Console.WriteLine("Host created successfully!");
         }
-        Console.WriteLine("Invalid input. Please enter a positive integer.");
-        return CreateHosts(); // Retry if input is invalid
+        else
+        {
+            Console.WriteLine("Host name shouldn't be empty. Please try again.");
+        }
     }
 
-    private static void DisplayHosts(List<Host> hosts)
+    private static void DisplayHosts()
     {
         Console.WriteLine("List of hosts:\n");
         foreach (var host in hosts)
@@ -89,7 +111,7 @@ public class Program
                 if (!string.IsNullOrWhiteSpace(newName))
                 {
                     hostToEdit.Name = newName;
-                    Console.WriteLine("Host updated successfully!");
+                    Console.WriteLine("Host edited successfully!");
                 }
                 else
                 {
@@ -107,7 +129,7 @@ public class Program
         }
     }
 
-    private static void DeleteHost(List<Host> hosts)
+    private static void DeleteHost()
     {
         Console.Write("Enter the host ID you want to delete: ");
         if (int.TryParse(Console.ReadLine(), out var id))
