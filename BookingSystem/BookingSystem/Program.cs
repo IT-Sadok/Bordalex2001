@@ -1,4 +1,6 @@
-﻿namespace BookingSystem;
+﻿using BookingSystem.Models;
+
+namespace BookingSystem;
 
 public class Program
 {

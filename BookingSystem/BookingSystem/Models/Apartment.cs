@@ -1,4 +1,4 @@
-﻿namespace BookingSystem;
+﻿namespace BookingSystem.Models;
 
 public class Apartment
 {
