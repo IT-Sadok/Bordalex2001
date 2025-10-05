@@ -24,7 +24,7 @@ public class Program
             switch (choice)
             {
                 case "1":
-                    CreateHosts();
+                    CreateHost();
                     break;
                 case "2":
                     DisplayHosts();
@@ -50,7 +50,7 @@ public class Program
         }*/
     }
 
-    private static void CreateHosts()
+    private static void CreateHost()
     {
         Console.Write("Enter a host name: ");
         var name = Console.ReadLine();
