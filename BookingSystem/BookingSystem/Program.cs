@@ -1,11 +1,12 @@
-﻿using BookingSystem.Models;
+﻿using BookingSystem.Repositories;
+using BookingSystem.Services;
 
 namespace BookingSystem;
 
 public class Program
 {
-    private static readonly List<Host> hosts = [];
-    private static int id;
+    private static readonly HostRepository hostRepository = new();
+    private static readonly HostService hostService = new(hostRepository);
 
     public static void Main(string[] args)
     {
@@ -56,8 +57,7 @@ public class Program
         var name = Console.ReadLine();
         if (!string.IsNullOrWhiteSpace(name))
         {
-            var newHost = new Host { Id = ++id, Name = name };
-            hosts.Add(newHost);
+            hostService.CreateHost(name);
             Console.WriteLine("Host created successfully!");
         }
         else
@@ -69,7 +69,7 @@ public class Program
     private static void DisplayHosts()
     {
         Console.WriteLine("List of hosts:\n");
-        foreach (var host in hosts)
+        foreach (var host in hostService.DisplayHosts())
         {
             Console.WriteLine($"Host ID: {host.Id}, Name: {host.Name}");
         }
@@ -105,25 +105,25 @@ public class Program
         Console.Write("Enter the host ID you want to edit: ");
         if (int.TryParse(Console.ReadLine(), out var id))
         {
-            var hostToEdit = hosts.Find(h => h.Id == id);
-            if (hostToEdit != null)
-            {
+            //var hostToEdit = hosts.Find(h => h.Id == id);
+            //if (hostToEdit != null)
+            //{
                 Console.Write("Enter the new name for the host: ");
                 var newName = Console.ReadLine();
                 if (!string.IsNullOrWhiteSpace(newName))
                 {
-                    hostToEdit.Name = newName;
+                    hostService.EditHost(id, newName);
                     Console.WriteLine("Host edited successfully!");
                 }
                 else
                 {
                     Console.WriteLine("Host name shouldn't be empty. Please try again.");
                 }
-            }
-            else
-            {
-                Console.WriteLine("Host not found");
-            }
+            //}
+            //else
+            //{
+                //Console.WriteLine("Host not found");
+            //}
         }
         else
         {
@@ -136,16 +136,16 @@ public class Program
         Console.Write("Enter the host ID you want to delete: ");
         if (int.TryParse(Console.ReadLine(), out var id))
         {
-            var hostToDelete = hosts.Find(h => h.Id == id);
-            if (hostToDelete != null)
-            {
-                hosts.Remove(hostToDelete);
+            //var hostToDelete = hosts.Find(h => h.Id == id);
+            //if (hostToDelete != null)
+            //{
+                hostService.DeleteHost(id);
                 Console.WriteLine("Host deleted successfully!");
-            }
-            else
-            {
-                Console.WriteLine("Host not found");
-            }
+            //}
+            //else
+            //{
+                //Console.WriteLine("Host not found");
+            //}
         }
         else
         {
