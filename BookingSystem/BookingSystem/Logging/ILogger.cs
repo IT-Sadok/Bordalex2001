@@ -1,4 +1,4 @@
-﻿namespace BookingSystem.Logger;
+﻿namespace BookingSystem.Logging;
 
 public interface ILogger
 {

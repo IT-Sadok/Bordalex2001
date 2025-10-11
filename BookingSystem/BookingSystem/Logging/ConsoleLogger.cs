@@ -1,6 +1,6 @@
-﻿namespace BookingSystem.Logger;
+﻿namespace BookingSystem.Logging;
 
-public class Logger : ILogger
+public class ConsoleLogger : ILogger
 {
     public void LogInfo(string message)
     {

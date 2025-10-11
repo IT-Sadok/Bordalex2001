@@ -1,10 +1,17 @@
-﻿using BookingSystem.Models;
+﻿using BookingSystem.Logging;
+using BookingSystem.Models;
 
 namespace BookingSystem.Repositories;
 
 public class HostRepository
 {
     private readonly List<Host> _hosts = [];
+    private readonly ILogger _logger;
+
+    public HostRepository(ILogger logger)
+    {
+        _logger = logger;
+    }
 
     public void CreateHost(Host host) => _hosts.Add(host);
 

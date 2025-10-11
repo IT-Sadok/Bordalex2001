@@ -1,12 +1,14 @@
-﻿using BookingSystem.Repositories;
+﻿using BookingSystem.Logging;
+using BookingSystem.Repositories;
 using BookingSystem.Services;
 
 namespace BookingSystem;
 
 public class Program
 {
-    private static readonly HostRepository hostRepository = new();
-    private static readonly HostService hostService = new(hostRepository);
+    private static readonly ILogger logger = new ConsoleLogger();
+    private static readonly HostRepository hostRepository = new(logger);
+    private static readonly HostService hostService = new(hostRepository, logger);
 
     public static void Main(string[] args)
     {

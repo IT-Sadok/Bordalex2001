@@ -1,4 +1,5 @@
-﻿using BookingSystem.Models;
+﻿using BookingSystem.Logging;
+using BookingSystem.Models;
 using BookingSystem.Repositories;
 
 namespace BookingSystem.Services;
@@ -6,10 +7,12 @@ namespace BookingSystem.Services;
 public class HostService
 {
     private readonly HostRepository _repository;
+    private readonly ILogger _logger;
 
-    public HostService(HostRepository repository)
+    public HostService(HostRepository repository, ILogger logger)
     {
         _repository = repository;
+        _logger = logger;
     }
 
     public IEnumerable<Host> DisplayHosts() => _repository.DisplayHosts();
