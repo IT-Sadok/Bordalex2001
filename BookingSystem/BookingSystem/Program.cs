@@ -7,7 +7,7 @@ namespace BookingSystem;
 public class Program
 {
     private static readonly ILogger logger = new ConsoleLogger();
-    private static readonly HostRepository hostRepository = new(logger);
+    private static readonly HostRepository hostRepository = new();
     private static readonly HostService hostService = new(hostRepository, logger);
 
     public static void Main(string[] args)
@@ -42,30 +42,17 @@ public class Program
                     showMenu = false;
                     break;
                 default:
-                    Console.WriteLine("Invalid choice. Please choose a valid option.");
+                    logger.LogError("Invalid choice. Please select a valid option.");
                     break;
             }
         }
-        /*var selectedHost = DisplayHostById(hosts);
-        if (selectedHost != null)
-        {
-            DisplayApartments(selectedHost);
-        }*/
     }
 
     private static void CreateHost()
     {
         Console.Write("Enter a host name: ");
         var name = Console.ReadLine();
-        if (!string.IsNullOrWhiteSpace(name))
-        {
-            hostService.CreateHost(name);
-            Console.WriteLine("Host created successfully!");
-        }
-        else
-        {
-            Console.WriteLine("Host name shouldn't be empty. Please try again.");
-        }
+        hostService.CreateHost(name);
     }
 
     private static void DisplayHosts()
@@ -105,53 +92,28 @@ public class Program
     private static void EditHost()
     {
         Console.Write("Enter the host ID you want to edit: ");
-        if (int.TryParse(Console.ReadLine(), out var id))
+        if (!int.TryParse(Console.ReadLine(), out var id))
         {
-            //var hostToEdit = hosts.Find(h => h.Id == id);
-            //if (hostToEdit != null)
-            //{
-                Console.Write("Enter the new name for the host: ");
-                var newName = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(newName))
-                {
-                    hostService.EditHost(id, newName);
-                    Console.WriteLine("Host edited successfully!");
-                }
-                else
-                {
-                    Console.WriteLine("Host name shouldn't be empty. Please try again.");
-                }
-            //}
-            //else
-            //{
-                //Console.WriteLine("Host not found");
-            //}
+            logger.LogError("Invalid input. Please enter a valid host ID.");
+            return;
         }
         else
         {
-            Console.WriteLine("Invalid input. Please enter a valid host ID.");
+            hostService.EditHost(id);
         }
     }
 
     private static void DeleteHost()
     {
         Console.Write("Enter the host ID you want to delete: ");
-        if (int.TryParse(Console.ReadLine(), out var id))
+        if (!int.TryParse(Console.ReadLine(), out var id))
         {
-            //var hostToDelete = hosts.Find(h => h.Id == id);
-            //if (hostToDelete != null)
-            //{
-                hostService.DeleteHost(id);
-                Console.WriteLine("Host deleted successfully!");
-            //}
-            //else
-            //{
-                //Console.WriteLine("Host not found");
-            //}
+            logger.LogError("Invalid input. Please enter a valid host ID.");
+            return;
         }
         else
         {
-            Console.WriteLine("Invalid input. Please enter a valid host ID.");
+            hostService.DeleteHost(id);
         }
     }
 }

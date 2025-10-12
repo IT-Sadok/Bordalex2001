@@ -4,16 +4,10 @@ using BookingSystem.Repositories;
 
 namespace BookingSystem.Services;
 
-public class HostService
+public class HostService(HostRepository repository, ILogger logger)
 {
-    private readonly HostRepository _repository;
-    private readonly ILogger _logger;
-
-    public HostService(HostRepository repository, ILogger logger)
-    {
-        _repository = repository;
-        _logger = logger;
-    }
+    private readonly HostRepository _repository = repository;
+    private readonly ILogger _logger = logger;
 
     public IEnumerable<Host> DisplayHosts() => _repository.DisplayHosts();
 
@@ -21,25 +15,55 @@ public class HostService
 
     public void CreateHost(string name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            _logger.LogWarning("Host name shouldn't be empty. Please try again.");
+            return;
+        }
+
         var host = new Host
         {
             Id = GenerateId(),
             Name = name
         };
         _repository.CreateHost(host);
+        _logger.LogInfo("Host created successfully.");
     }
 
-    public void EditHost(int id, string newName)
+    public void EditHost(int id)
     {
         var host = _repository.GetHostById(id);
-        if (host != null)
+        if (host == null)
         {
-            host.Name = newName;
-            _repository.EditHost(host);
+            _logger.LogError("Host not found.");
+            return;
         }
+
+        Console.Write("Enter a new host name: ");
+        var newName = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(newName))
+        {
+            _logger.LogWarning("Host name shouldn't be empty. Please try again.");
+            return;
+        }
+
+        host.Name = newName;
+        _repository.EditHost(host);
+        _logger.LogInfo("Host edited successfully.");
     }
 
-    public void DeleteHost(int id) => _repository.DeleteHost(id);
+    public void DeleteHost(int id)
+    {
+        var host = _repository.GetHostById(id);
+        if (host == null)
+        {
+            _logger.LogError("Host not found.");
+            return;
+        }
+
+        _repository.DeleteHost(id);
+        _logger.LogInfo($"Host deleted successfully.");
+    }
 
     private int GenerateId()
     {
