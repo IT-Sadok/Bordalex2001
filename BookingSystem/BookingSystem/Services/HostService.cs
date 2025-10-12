@@ -4,7 +4,7 @@ using BookingSystem.Repositories;
 
 namespace BookingSystem.Services;
 
-public class HostService(HostRepository repository, ILogger logger)
+public class HostService(HostRepository repository, ILogger logger) : IHostService
 {
     private readonly HostRepository _repository = repository;
     private readonly ILogger _logger = logger;

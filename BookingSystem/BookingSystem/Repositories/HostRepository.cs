@@ -3,7 +3,7 @@ using BookingSystem.Models;
 
 namespace BookingSystem.Repositories;
 
-public class HostRepository
+public class HostRepository : IHostRepository
 {
     private readonly List<Host> _hosts = [];
 
