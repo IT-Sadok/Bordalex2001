@@ -4,9 +4,9 @@ using BookingSystem.Repositories;
 
 namespace BookingSystem.Services;
 
-public class HostService(HostRepository repository, ILogger logger) : IHostService
+public class HostService(IHostRepository repository, ILogger logger) : IHostService
 {
-    private readonly HostRepository _repository = repository;
+    private readonly IHostRepository _repository = repository;
     private readonly ILogger _logger = logger;
 
     public IEnumerable<Host> DisplayHosts() => _repository.DisplayHosts();
