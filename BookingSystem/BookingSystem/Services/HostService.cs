@@ -65,6 +65,32 @@ public class HostService(IHostRepository repository, ILogger logger) : IHostServ
         _logger.LogInfo($"Host deleted successfully.");
     }
 
+    public void LoadHosts()
+    {
+        try
+        {
+            _repository.LoadHosts();
+            _logger.LogInfo("Hosts loaded successfully.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error loading hosts: {ex.Message}");
+        }
+    }
+
+    public void SaveHosts()
+    {
+        try 
+        {
+            _repository.SaveHosts();
+            _logger.LogInfo("Hosts saved successfully.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error saving hosts: {ex.Message}");
+        }
+    }
+
     private int GenerateId()
     {
         var hosts = _repository.DisplayHosts();

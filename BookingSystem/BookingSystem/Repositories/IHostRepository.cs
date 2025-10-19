@@ -9,4 +9,6 @@ public interface IHostRepository
     Host? GetHostById(int id);
     void EditHost(Host host);
     void DeleteHost(int id);
+    void LoadHosts();
+    void SaveHosts();
 }
