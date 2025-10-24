@@ -7,6 +7,7 @@ public class HostRepository : IHostRepository
 {
     private readonly string _filePath = "hosts.json";
     private readonly List<Host> _hosts = [];
+    private static readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
 
     public void CreateHost(Host host) => _hosts.Add(host);
 
@@ -41,8 +42,8 @@ public class HostRepository : IHostRepository
                 return;
             }
             
-            var json = File.ReadAllText(_filePath);
-            var hosts = JsonSerializer.Deserialize<List<Host>>(json);
+            using var fs = File.OpenRead(_filePath);
+            var hosts = JsonSerializer.Deserialize<List<Host>>(fs, _jsonOptions);
             if (hosts != null)
             {
                 _hosts.Clear();
@@ -60,8 +61,9 @@ public class HostRepository : IHostRepository
         try 
         {
             JsonSerializerOptions options = new() { WriteIndented = true };
-            var json = JsonSerializer.Serialize(_hosts, options);
-            File.WriteAllText(_filePath, json);
+            using var fs = File.Open(_filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+            JsonSerializer.Serialize(fs, _hosts, _jsonOptions);
+            fs.Flush();
         }
         catch
         {
