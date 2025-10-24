@@ -12,6 +12,8 @@ public class Program
 
     public static void Main(string[] args)
     {
+        LoadHosts();
+
         bool showMenu = true;
         while (showMenu)
         {
@@ -21,6 +23,7 @@ public class Program
             Console.WriteLine("3. Edit Host");
             Console.WriteLine("4. Delete Host");
             Console.WriteLine("5. Exit");
+            Console.WriteLine("6. Save Hosts");
             Console.Write("\nChoose an option (1-5): ");
             var choice = Console.ReadLine();
             Console.WriteLine();
@@ -40,6 +43,9 @@ public class Program
                     break;
                 case "5":
                     showMenu = false;
+                    break;
+                case "6":
+                    SaveHosts();
                     break;
                 default:
                     logger.LogError("Invalid choice. Please select a valid option.");
@@ -115,5 +121,15 @@ public class Program
         {
             hostService.DeleteHost(id);
         }
+    }
+
+    private static void LoadHosts()
+    {
+        hostService.LoadHosts();
+    }
+
+    private static void SaveHosts()
+    {
+        hostService.SaveHosts();
     }
 }
