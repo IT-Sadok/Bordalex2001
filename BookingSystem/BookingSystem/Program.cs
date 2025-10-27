@@ -1,4 +1,5 @@
 ﻿using BookingSystem.Logging;
+using BookingSystem.Models;
 using BookingSystem.Repositories;
 using BookingSystem.Services;
 
@@ -131,5 +132,67 @@ public class Program
     private static void SaveHosts()
     {
         hostService.SaveHosts();
+    }
+
+    private static void SimulateMultithreading()
+    {
+        Console.WriteLine("Simulating multithreading environment...");
+
+        var apartment = new Apartment(100);
+        int iterations = 100;
+
+        Thread host1 = new(() =>
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                logger.LogInfo($"Host 1 increasing price, iteration {i+1}");
+                apartment.IncreasePriceUnsafely(10);
+            }
+        });
+        Thread host2 = new(() =>
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                logger.LogInfo($"Host 2 increasing price, iteration {i+1}");
+                apartment.IncreasePriceUnsafely(10);
+            }
+        });
+
+        host1.Start();
+        host2.Start();
+        host1.Join();
+        host2.Join();
+
+        int expectedPrice = 100 + (2 * iterations * 10);
+        Console.WriteLine($"Expected Price: {expectedPrice}");
+        Console.WriteLine($"Final Price (without syncronization): {apartment.Price}");
+        Console.WriteLine("Update loss occurred due to Race Condition.");
+
+        apartment = new Apartment(100);
+        host1 = new(() =>
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                logger.LogInfo($"Host 1 increasing price, iteration {i+1}");
+                apartment.IncreasePriceSafely(10);
+            }
+        });
+        host2 = new(() =>
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                logger.LogInfo($"Host 2 increasing price, iteration {i+1}");
+                apartment.IncreasePriceSafely(10);
+            }
+        });
+
+        host1.Start();
+        host2.Start();
+        host1.Join();
+        host2.Join();
+
+        Console.WriteLine($"Expected Price: {expectedPrice}");
+        Console.WriteLine($"Final Price (with syncronization): {apartment.Price}");
+        Console.WriteLine($"Update loss prevented with proper locking mechanism.");
     }
 }
