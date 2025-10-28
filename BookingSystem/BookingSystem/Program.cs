@@ -25,6 +25,7 @@ public class Program
             Console.WriteLine("4. Delete Host");
             Console.WriteLine("5. Exit");
             Console.WriteLine("6. Save Hosts");
+            Console.WriteLine("7. Simulate Multithreading");
             Console.Write("\nChoose an option (1-5): ");
             var choice = Console.ReadLine();
             Console.WriteLine();
@@ -47,6 +48,9 @@ public class Program
                     break;
                 case "6":
                     SaveHosts();
+                    break;
+                case "7":
+                    SimulateMultithreading();
                     break;
                 default:
                     logger.LogError("Invalid choice. Please select a valid option.");
@@ -136,7 +140,7 @@ public class Program
 
     private static void SimulateMultithreading()
     {
-        Console.WriteLine("Simulating multithreading environment...");
+        Console.WriteLine("Simulating multithreading environment...\n");
 
         var apartment = new Apartment(100);
         int iterations = 100;
@@ -164,9 +168,10 @@ public class Program
         host2.Join();
 
         int expectedPrice = 100 + (2 * iterations * 10);
-        Console.WriteLine($"Expected Price: {expectedPrice}");
-        Console.WriteLine($"Final Price (without syncronization): {apartment.Price}");
-        Console.WriteLine("Update loss occurred due to Race Condition.");
+        Console.WriteLine($"\nExpected price: {expectedPrice}");
+        Console.WriteLine($"Final price (without syncronization): {apartment.Price}\n");
+        Console.WriteLine("Update loss occurred due to Race Condition.\n");
+        Console.WriteLine("------------------------------------------\n");
 
         apartment = new Apartment(100);
         host1 = new(() =>
@@ -191,8 +196,8 @@ public class Program
         host1.Join();
         host2.Join();
 
-        Console.WriteLine($"Expected Price: {expectedPrice}");
-        Console.WriteLine($"Final Price (with syncronization): {apartment.Price}");
+        Console.WriteLine($"\nExpected price: {expectedPrice}");
+        Console.WriteLine($"Final price (with syncronization): {apartment.Price}\n");
         Console.WriteLine($"Update loss prevented with proper locking mechanism.");
     }
 }
