@@ -1,4 +1,5 @@
 ﻿using BookingSystem.Logging;
+using BookingSystem.Models;
 using BookingSystem.Repositories;
 using BookingSystem.Services;
 
@@ -24,6 +25,7 @@ public class Program
             Console.WriteLine("4. Delete Host");
             Console.WriteLine("5. Exit");
             Console.WriteLine("6. Save Hosts");
+            Console.WriteLine("7. Simulate Multithreading");
             Console.Write("\nChoose an option (1-5): ");
             var choice = Console.ReadLine();
             Console.WriteLine();
@@ -46,6 +48,9 @@ public class Program
                     break;
                 case "6":
                     SaveHosts();
+                    break;
+                case "7":
+                    SimulateMultithreading();
                     break;
                 default:
                     logger.LogError("Invalid choice. Please select a valid option.");
@@ -131,5 +136,68 @@ public class Program
     private static void SaveHosts()
     {
         hostService.SaveHosts();
+    }
+
+    private static void SimulateMultithreading()
+    {
+        Console.WriteLine("Simulating multithreading environment...\n");
+
+        var apartment = new Apartment(100);
+        int iterations = 100;
+
+        Thread host1 = new(() =>
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                logger.LogInfo($"Host 1 increasing price, iteration {i+1}");
+                apartment.IncreasePriceUnsafely(10);
+            }
+        });
+        Thread host2 = new(() =>
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                logger.LogInfo($"Host 2 increasing price, iteration {i+1}");
+                apartment.IncreasePriceUnsafely(10);
+            }
+        });
+
+        host1.Start();
+        host2.Start();
+        host1.Join();
+        host2.Join();
+
+        int expectedPrice = 100 + (2 * iterations * 10);
+        Console.WriteLine($"\nExpected price: {expectedPrice}");
+        Console.WriteLine($"Final price (without syncronization): {apartment.Price}\n");
+        Console.WriteLine("Update loss occurred due to Race Condition.\n");
+        Console.WriteLine("------------------------------------------\n");
+
+        apartment = new Apartment(100);
+        host1 = new(() =>
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                logger.LogInfo($"Host 1 increasing price, iteration {i+1}");
+                apartment.IncreasePriceSafely(10);
+            }
+        });
+        host2 = new(() =>
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                logger.LogInfo($"Host 2 increasing price, iteration {i+1}");
+                apartment.IncreasePriceSafely(10);
+            }
+        });
+
+        host1.Start();
+        host2.Start();
+        host1.Join();
+        host2.Join();
+
+        Console.WriteLine($"\nExpected price: {expectedPrice}");
+        Console.WriteLine($"Final price (with syncronization): {apartment.Price}\n");
+        Console.WriteLine($"Update loss prevented with proper locking mechanism.");
     }
 }
