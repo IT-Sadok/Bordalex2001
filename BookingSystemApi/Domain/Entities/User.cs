@@ -1,4 +1,4 @@
-﻿namespace BookingSystemApi.Entities;
+﻿namespace Domain.Entities;
 
 public class User
 {
