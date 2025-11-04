@@ -1,4 +1,4 @@
-﻿namespace BookingSystemApi.Models.DTO;
+﻿namespace Application.Models.DTOs;
 
 public class LoginDto
 {

@@ -1,4 +1,4 @@
-﻿namespace BookingSystemApi.Models;
+﻿namespace Application.Models;
 
 public class AuthResponse(string token)
 {
