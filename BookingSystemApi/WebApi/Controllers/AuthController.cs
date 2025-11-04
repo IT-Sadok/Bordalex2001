@@ -1,5 +1,5 @@
-﻿using BookingSystemApi.Entities;
-using BookingSystemApi.Models.DTO;
+﻿using Application.Models.DTOs;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
