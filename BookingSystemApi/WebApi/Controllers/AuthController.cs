@@ -1,43 +1,21 @@
-﻿using Application.Models.DTOs;
-using Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using Application.Features.Users.LoginUser;
+using Application.Features.Users.RegisterUser;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookingSystemApi.Controllers;
+namespace WebApi.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/auth")]
 [ApiController]
-public class AuthController : ControllerBase
+public class AuthController(IMediator mediator) : ControllerBase
 {
-    public static User user = new();
-
     [HttpPost("register")]
-    public ActionResult<User> Register(RegisterDto request)
-    {
-        var hashedPassword = new PasswordHasher<User>().HashPassword(user, request.Password);
-
-        user.Email = request.Email;
-        user.PasswordHash = hashedPassword;
-        user.Name = request.Name;
-        user.Role = request.Role;
-
-        return Ok(user);
-    }
+    public async Task<IActionResult> Register(RegisterUserCommand command) => Ok(await mediator.Send(command));
 
     [HttpPost("login")]
-    public ActionResult<User> Login(LoginDto request)
+    public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
     {
-        if (user.Email != request.Email)
-        {
-            return NotFound("User not found");
-        }
-        if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password) == PasswordVerificationResult.Failed)
-        {
-            return BadRequest("Wrong password");
-        }
-
-        string token = "success";
-
-        return Ok(token);
+        var token = await mediator.Send(command);
+        return Ok(new { Token = token });
     }
 }
