@@ -2,7 +2,9 @@
 using Domain.Entities;
 using Domain.Settings;
 using Infrastructure.Auth;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -15,6 +17,18 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+
+        services.AddDbContext<AppDbContext>(options =>
+        {
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
+                npgsqlOptions =>
+                {
+                    npgsqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorCodesToAdd: null);
+                });
+        });
 
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
