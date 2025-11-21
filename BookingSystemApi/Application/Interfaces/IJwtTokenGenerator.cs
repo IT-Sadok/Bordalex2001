@@ -1,8 +1,6 @@
-﻿using Domain.Entities;
-
-namespace Application.Interfaces;
+﻿namespace Application.Interfaces;
 
 public interface IJwtTokenGenerator
 {
-    string GenerateToken(User user);
+    string GenerateToken(Guid userId, string name, IEnumerable<string> roles);
 }

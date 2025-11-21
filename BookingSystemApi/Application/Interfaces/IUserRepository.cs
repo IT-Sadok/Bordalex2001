@@ -4,6 +4,6 @@ namespace Application.Interfaces;
 
 public interface IUserRepository
 {
-    Task<User?> GetByEmailAsync(string email);
-    Task AddUserAsync(User user);
+    Task<ApplicationUser?> GetByEmailAsync(string email);
+    Task AddUserAsync(ApplicationUser user);
 }

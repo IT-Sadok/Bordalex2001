@@ -1,5 +1,4 @@
 ﻿using Application.Interfaces;
-using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -7,7 +6,7 @@ namespace Application.Features.Users.LoginUser;
 
 public class LoginUserHandler(
     IUserRepository userRepository,
-    IPasswordHasher<User> passwordHasher,
+    IPasswordHasher<AppUser> passwordHasher,
     IJwtTokenGenerator jwtGenerator) : IRequestHandler<LoginUserCommand, string>
 {
     public async Task<string> Handle(LoginUserCommand request, CancellationToken ct)

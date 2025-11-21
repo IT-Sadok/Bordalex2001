@@ -1,8 +1,8 @@
 ﻿using Application.Interfaces;
-using Domain.Entities;
 using Domain.Settings;
 using Infrastructure.Auth;
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -30,9 +30,11 @@ public static class DependencyInjection
                 });
         });
 
+        services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
-        services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+        services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
 
         var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
