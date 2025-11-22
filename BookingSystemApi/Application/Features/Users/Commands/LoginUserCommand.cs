@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Application.Features.Users.LoginUser;
+namespace Application.Features.Users.Commands;
 
 public record LoginUserCommand(
     string Email, 
