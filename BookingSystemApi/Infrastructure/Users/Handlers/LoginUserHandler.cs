@@ -1,29 +1,30 @@
-﻿using Application.Interfaces;
-using MediatR;
+﻿using Application.Common.Mediator;
+using Application.Features.Users.Commands;
+using Application.Interfaces;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.Features.Users.LoginUser;
+namespace Infrastructure.Users.Handlers;
 
 public class LoginUserHandler(
-    IUserRepository userRepository,
-    IPasswordHasher<AppUser> passwordHasher,
+    SignInManager<AppUser> signInManager,
+    UserManager<AppUser> userManager,
     IJwtTokenGenerator jwtGenerator) : IRequestHandler<LoginUserCommand, string>
 {
-    public async Task<string> Handle(LoginUserCommand request, CancellationToken ct)
-    { 
-        var user = await userRepository.GetByEmailAsync(request.Email);
+    public async Task<string> HandleAsync(LoginUserCommand request, CancellationToken ct = default)
+    {
+        var user = await userManager.FindByEmailAsync(request.Email);
         if (user is null)
         {
-            await Task.FromException(new Exception("User not found."));
+            throw new InvalidOperationException("Invalid email or password.");
         }
-
-        var verifyResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
-        if (verifyResult == PasswordVerificationResult.Failed)
+        var signInResult = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+        if (!signInResult.Succeeded)
         {
-            await Task.FromException(new Exception("Wrong password."));
+            throw new InvalidOperationException("Invalid email or password.");
         }
-
-        var jwt = jwtGenerator.GenerateToken(user);
-        return jwt;
+        var roles = await userManager.GetRolesAsync(user);
+        var token = await jwtGenerator.GenerateTokenAsync(Guid.Parse(user.Id), user.UserName, roles);
+        return token;
     }
 }

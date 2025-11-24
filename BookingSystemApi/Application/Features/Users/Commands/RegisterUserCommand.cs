@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Application.Common.Mediator;
 
 namespace Application.Features.Users.Commands;
 
