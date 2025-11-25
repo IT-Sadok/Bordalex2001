@@ -1,8 +1,11 @@
-﻿using Application.Interfaces;
-using Domain.Settings;
+﻿using Application.Common.Mediator;
+using Application.Features.Users.Commands;
+using Application.Interfaces;
 using Infrastructure.Auth;
+using Infrastructure.Consts;
 using Infrastructure.Data;
 using Infrastructure.Identity;
+using Infrastructure.Users.Handlers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,14 +30,15 @@ public static class DependencyInjection
                         maxRetryCount: 5,
                         maxRetryDelay: TimeSpan.FromSeconds(10),
                         errorCodesToAdd: null);
+                    npgsqlOptions.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName);
                 });
         });
 
-        services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
-
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
-        services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
+        services.AddScoped<IRequestHandler<RegisterUserCommand, Guid>, RegisterUserHandler>();
+        
+        services.AddScoped<IRequestHandler<LoginUserCommand, string>, LoginUserHandler>();
 
         var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
@@ -64,8 +68,27 @@ public static class DependencyInjection
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequiredLength = 8;
             options.User.RequireUniqueEmail = true;
-        });
+        })
+        .AddSignInManager()
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<AppDbContext>();
 
         return services;
+    }
+
+    public static async Task MigrateAndSeedDbAsync(this IServiceProvider sp, CancellationToken ct = default)
+    {
+        using var scope = sp.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await context.Database.MigrateAsync(ct);
+        
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        foreach (var role in new[] { Roles.Client, Roles.Host })
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                await roleManager.CreateAsync(new IdentityRole(role));
+            }
+        }
     }
 }
