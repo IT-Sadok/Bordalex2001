@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Configuration;
 
-namespace Infrastructure.Consts
+namespace Infrastructure.Consts;
+
+public class Roles(IConfiguration configuration)
 {
-    public static class Roles
+    public string[] GetRoles()
     {
-        public const string Host = "Host";
-        public const string Client = "Client";
-
-        public static readonly IReadOnlyCollection<string> AllRoles = [Host, Client];
-
-        public static bool IsValidRole(string role) => AllRoles.Contains(role);
+        return configuration.GetSection("Roles").Get<string[]>() ?? throw new ArgumentException("Roles section is missing in configuration.");
     }
 }

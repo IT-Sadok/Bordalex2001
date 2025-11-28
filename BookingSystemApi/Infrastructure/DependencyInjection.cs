@@ -73,6 +73,8 @@ public static class DependencyInjection
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<AppDbContext>();
 
+        services.AddSingleton<Roles>();
+
         return services;
     }
 
@@ -80,10 +82,12 @@ public static class DependencyInjection
     {
         using var scope = sp.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var roleStore = scope.ServiceProvider.GetRequiredService<Roles>();
+
         await context.Database.MigrateAsync(ct);
         
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        foreach (var role in new[] { Roles.Client, Roles.Host })
+        foreach (var role in roleStore.GetRoles())
         {
             if (!await roleManager.RoleExistsAsync(role))
             {
