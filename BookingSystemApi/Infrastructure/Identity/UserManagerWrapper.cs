@@ -8,8 +8,8 @@ public class UserManagerWrapper(UserManager<AppUser> userManager) : IUserManager
      public async Task<AppUser?> FindByEmailAsync(string email) =>
         await userManager.FindByEmailAsync(email);
 
-    public async Task<IList<string>> GetRolesAsync(string userId) =>
-        await userManager.GetRolesAsync(userManager.Users.First(u => u.Id == userId));
+    public async Task<IEnumerable<string>> GetRolesAsync(AppUser user) =>
+        await userManager.GetRolesAsync(userManager.Users.First(u => u.Id == user.Id));
 
     public async Task<IdentityResult> CreateAsync(AppUser user, string password) =>
         await userManager.CreateAsync(user, password);
