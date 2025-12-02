@@ -1,4 +1,6 @@
-﻿namespace Application.Common.Mediator;
+﻿using Application.Common.Mediator.Interfaces;
+
+namespace Application.Common.Mediator;
 
 public class RequestExecutor(IServiceProvider serviceProvider)
 {

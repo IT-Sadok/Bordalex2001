@@ -1,4 +1,4 @@
-﻿using Application.Common.Mediator;
+﻿using Application.Common.Mediator.Interfaces;
 using Application.Features.Users.Commands;
 using Infrastructure.Consts;
 using Infrastructure.Identity;

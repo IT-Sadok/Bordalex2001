@@ -6,10 +6,10 @@ namespace WebApi.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-public class AuthController(IMediator mediator) : ControllerBase
+public class AuthController(IRequest request) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterUserCommand command) => Ok(await mediator.Send(command));
+    public async Task<IActionResult> Register(RegisterUserCommand command) => Ok(await request.Send(command));
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginUserCommand command)

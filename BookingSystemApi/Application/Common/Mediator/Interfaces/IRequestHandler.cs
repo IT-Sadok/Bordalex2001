@@ -1,4 +1,4 @@
-﻿namespace Application.Common.Mediator;
+﻿namespace Application.Common.Mediator.Interfaces;
 
 public interface IRequestHandler<TRequest, TResult>
     where TRequest : IRequest<TResult>
