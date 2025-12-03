@@ -1,11 +1,9 @@
-﻿using Application.Common.Mediator.Interfaces;
-using Application.Features.Users.Commands;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using Infrastructure.Auth;
 using Infrastructure.Consts;
 using Infrastructure.Data;
 using Infrastructure.Identity;
-using Infrastructure.Users.Handlers;
+using Infrastructure.Identity.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,10 +33,6 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-
-        services.AddScoped<IRequestHandler<RegisterUserCommand, Guid>, RegisterUserHandler>();
-        
-        services.AddScoped<IRequestHandler<LoginUserCommand, string>, LoginUserHandler>();
 
         var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
@@ -74,6 +68,10 @@ public static class DependencyInjection
         .AddEntityFrameworkStores<AppDbContext>();
 
         services.AddSingleton<Roles>();
+
+        services.AddScoped<IUserManagerWrapper<AppUser>, UserManagerWrapper>();
+        services.AddScoped<IRoleManagerWrapper<IdentityRole>, RoleManagerWrapper>();
+        services.AddScoped<ISignInManagerWrapper<AppUser>, SignInManagerWrapper>();
 
         return services;
     }
