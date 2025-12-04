@@ -1,14 +1,18 @@
-﻿using Application.Interfaces;
+﻿using Application.Common.Mediator.Interfaces;
+using Application.Interfaces;
 using Infrastructure.Auth;
 using Infrastructure.Consts;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
+using Infrastructure.Users.Handlers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
+using System.Data;
 using System.Text;
 
 namespace Infrastructure;
@@ -67,30 +71,34 @@ public static class DependencyInjection
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<AppDbContext>();
 
-        services.AddSingleton<Roles>();
+        var handlerInterfaceType = typeof(IRequestHandler<,>);
+        var assembly = typeof(LoginUserHandler).Assembly;
+
+        var handlerTypes = assembly.GetTypes()
+            .Where(t => !t.IsAbstract && !t.IsInterface)
+            .SelectMany(t => t.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == handlerInterfaceType)
+                .Select(i => new { HandlerType = t, InterfaceType = i }));
+
+        foreach (var handler in handlerTypes)
+        {
+            services.AddScoped(handler.InterfaceType, handler.HandlerType);
+        }
 
         services.AddScoped<IUserManagerWrapper<AppUser>, UserManagerWrapper>();
         services.AddScoped<IRoleManagerWrapper<IdentityRole>, RoleManagerWrapper>();
         services.AddScoped<ISignInManagerWrapper<AppUser>, SignInManagerWrapper>();
 
-        return services;
-    }
-
-    public static async Task MigrateAndSeedDbAsync(this IServiceProvider sp, CancellationToken ct = default)
-    {
-        using var scope = sp.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var roleStore = scope.ServiceProvider.GetRequiredService<Roles>();
-
-        await context.Database.MigrateAsync(ct);
-        
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        foreach (var role in roleStore.GetRoles())
+        services.AddScoped<IDbConnection>(sp =>
         {
-            if (!await roleManager.RoleExistsAsync(role))
-            {
-                await roleManager.CreateAsync(new IdentityRole(role));
-            }
-        }
+            var connection = new NpgsqlConnection(
+                configuration.GetConnectionString("DefaultConnection"));
+            connection.Open();
+            return connection;
+        });
+
+        services.AddHttpContextAccessor();
+
+        return services;
     }
 }

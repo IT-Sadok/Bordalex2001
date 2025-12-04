@@ -1,12 +1,10 @@
-﻿using Infrastructure.Consts.Interfaces;
-using Microsoft.Extensions.Configuration;
+﻿namespace Infrastructure.Consts;
 
-namespace Infrastructure.Consts;
-
-public class Roles(IConfiguration configuration) : IRoles
+public static class Roles
 {
-    public string[] GetRoles()
-    {
-        return configuration.GetSection("Roles").Get<string[]>() ?? throw new ArgumentException("Roles section is missing in configuration.");
-    }
+    public const string Admin = "Admin";
+    public const string Host = "Host";
+    public const string Client = "Client";
+
+    public static readonly IReadOnlyCollection<string> AllRoles = [Admin, Host, Client];
 }
