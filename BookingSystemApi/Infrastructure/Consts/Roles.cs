@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Infrastructure.Consts.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Consts;
 
-public class Roles(IConfiguration configuration)
+public class Roles(IConfiguration configuration) : IRoles
 {
     public string[] GetRoles()
     {

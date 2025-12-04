@@ -2,5 +2,5 @@
 
 public interface IJwtTokenGenerator
 {
-    Task<string> GenerateTokenAsync(Guid userId, string userName, IEnumerable<string> roles);
+    Task<string> GenerateTokenAsync(Guid userId, string email, IEnumerable<string> roles);
 }

@@ -23,7 +23,7 @@ public class LoginUserHandler(
         }
 
         var roles = await userManager.GetRolesAsync(user);
-        var token = await jwtGenerator.GenerateTokenAsync(Guid.Parse(user.Id), user.UserName, roles);
+        var token = await jwtGenerator.GenerateTokenAsync(Guid.Parse(user.Id), user.Email, roles);
 
         return token;
     }

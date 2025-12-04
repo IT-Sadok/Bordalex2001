@@ -1,4 +1,5 @@
 ﻿using Application.Features.Users.Commands;
+using Infrastructure.Consts.Interfaces;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
 using Infrastructure.Users.Handlers;
@@ -11,6 +12,7 @@ public class RegisterUserHandlerTests
 {
     private readonly Mock<IUserManagerWrapper<AppUser>> _userManagerWrapperMock = new();
     private readonly Mock<IRoleManagerWrapper<IdentityRole>> _roleManagerWrapperMock = new();
+    private readonly Mock<IRoles> _rolesMock = new();
 
     [Fact]
     public async Task HandleAsync_IfUserAlreadyExists()
@@ -25,8 +27,9 @@ public class RegisterUserHandlerTests
         _userManagerWrapperMock
             .Setup(um => um.FindByEmailAsync(command.Email))
             .ReturnsAsync(new AppUser { Email = command.Email });
+        _rolesMock.Setup(r => r.GetRoles()).Returns(["Client"]);
 
-        var handler = new RegisterUserHandler(_userManagerWrapperMock.Object, _roleManagerWrapperMock.Object);
+        var handler = new RegisterUserHandler(_userManagerWrapperMock.Object, _roleManagerWrapperMock.Object, _rolesMock.Object);
 
         await Assert.ThrowsAsync<InvalidOperationException>(async () => await handler.HandleAsync(command));
 
@@ -55,8 +58,9 @@ public class RegisterUserHandlerTests
         _userManagerWrapperMock
             .Setup(um => um.AddToRoleAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
+        _rolesMock.Setup(r => r.GetRoles()).Returns(["Client"]);
 
-        var handler = new RegisterUserHandler(_userManagerWrapperMock.Object, _roleManagerWrapperMock.Object);
+        var handler = new RegisterUserHandler(_userManagerWrapperMock.Object, _roleManagerWrapperMock.Object, _rolesMock.Object);
 
         var result = await handler.HandleAsync(command);
 
@@ -82,8 +86,9 @@ public class RegisterUserHandlerTests
         _userManagerWrapperMock
             .Setup(um => um.CreateAsync(It.IsAny<AppUser>(), command.Password))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Password too weak." }));
+        _rolesMock.Setup(r => r.GetRoles()).Returns(["Client"]);
 
-        var handler = new RegisterUserHandler(_userManagerWrapperMock.Object, _roleManagerWrapperMock.Object);
+        var handler = new RegisterUserHandler(_userManagerWrapperMock.Object, _roleManagerWrapperMock.Object, _rolesMock.Object);
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () => await handler.HandleAsync(command));
 
@@ -109,12 +114,17 @@ public class RegisterUserHandlerTests
             .Setup(um => um.CreateAsync(It.IsAny<AppUser>(), command.Password))
             .ReturnsAsync(IdentityResult.Success);
         _roleManagerWrapperMock.Setup(rm => rm.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+        _userManagerWrapperMock
+            .Setup(um => um.AddToRoleAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Role assignment failed." }));
 
-        var handler = new RegisterUserHandler(_userManagerWrapperMock.Object, _roleManagerWrapperMock.Object);
+        _rolesMock.Setup(r => r.GetRoles()).Returns(["Client"]);
 
-        var result = await handler.HandleAsync(command);
+        var handler = new RegisterUserHandler(_userManagerWrapperMock.Object, _roleManagerWrapperMock.Object, _rolesMock.Object);
 
-        Assert.NotEqual(Guid.Empty, result);
+        var result = await Assert.ThrowsAsync<InvalidOperationException>(async () => await handler.HandleAsync(command));
+
+        Assert.Contains("Role assignment failed.", result.Message);
 
         _userManagerWrapperMock.Verify(um => um.AddToRoleAsync(It.IsAny<AppUser>(), It.IsAny<string>()), Times.Never);
     }

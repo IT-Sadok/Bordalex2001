@@ -11,13 +11,13 @@ public class JwtTokenGenerator(IOptions<JwtSettings> settings) : IJwtTokenGenera
 {
     private readonly JwtSettings _settings = settings.Value;
 
-    public async Task<string> GenerateTokenAsync(Guid userId, string userName, IEnumerable<string> roles)
+    public async Task<string> GenerateTokenAsync(Guid userId, string email, IEnumerable<string> roles)
     {
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new(JwtRegisteredClaimNames.UniqueName, userName),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new(JwtRegisteredClaimNames.Email, email),
+            new(ClaimTypes.NameIdentifier, userId.ToString())
         };
 
         foreach (var role in roles)
