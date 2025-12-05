@@ -5,6 +5,8 @@ using Infrastructure.Consts;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
+using Infrastructure.Seeders;
+using Infrastructure.Seeders.Interfaces;
 using Infrastructure.Users.Handlers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -98,6 +100,7 @@ public static class DependencyInjection
         });
 
         services.AddHttpContextAccessor();
+        services.AddScoped<IInitialDbSeeder, InitialDbSeeder>();
 
         return services;
     }

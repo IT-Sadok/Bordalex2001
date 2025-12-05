@@ -109,9 +109,6 @@ public class RegisterUserHandlerTests
             .Setup(um => um.CreateAsync(It.IsAny<AppUser>(), command.Password))
             .ReturnsAsync(IdentityResult.Success);
         _roleManagerWrapperMock.Setup(rm => rm.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
-        //_userManagerWrapperMock
-        //    .Setup(um => um.AddToRoleAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
-        //    .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Role assignment failed." }));
 
         var handler = new RegisterUserHandler(_userManagerWrapperMock.Object, _roleManagerWrapperMock.Object);
 
