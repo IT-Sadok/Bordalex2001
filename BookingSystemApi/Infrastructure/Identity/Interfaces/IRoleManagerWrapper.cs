@@ -1,0 +1,7 @@
+﻿namespace Infrastructure.Identity.Interfaces;
+
+public interface IRoleManagerWrapper<TRole>
+    where TRole : class
+{
+    Task<bool> RoleExistsAsync(string roleName);
+}
