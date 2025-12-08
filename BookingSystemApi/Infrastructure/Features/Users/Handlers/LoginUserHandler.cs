@@ -5,7 +5,7 @@ using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
-namespace Infrastructure.Users.Handlers;
+namespace Infrastructure.Features.Users.Handlers;
 
 public class LoginUserHandler(
     ISignInManagerWrapper<AppUser> signInManager,
