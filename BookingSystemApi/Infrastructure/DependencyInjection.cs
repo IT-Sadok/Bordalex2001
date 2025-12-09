@@ -6,6 +6,7 @@ using Infrastructure.Data;
 using Infrastructure.Features.Users.Handlers;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
+using Infrastructure.Repositories;
 using Infrastructure.Seeders;
 using Infrastructure.Seeders.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -101,6 +102,7 @@ public static class DependencyInjection
 
         services.AddHttpContextAccessor();
         services.AddScoped<IInitialDbSeeder, InitialDbSeeder>();
+        services.AddScoped<IApartmentRepository, ApartmentRepository>();
 
         return services;
     }

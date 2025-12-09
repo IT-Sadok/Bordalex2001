@@ -1,7 +1,7 @@
 ﻿using Application.Features.Users.Commands;
+using Infrastructure.Features.Users.Handlers;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
-using Infrastructure.Users.Handlers;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 
