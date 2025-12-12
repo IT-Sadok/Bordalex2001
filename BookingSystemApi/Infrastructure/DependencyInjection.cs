@@ -1,7 +1,6 @@
 ﻿using Application.Common.Mediator.Interfaces;
 using Application.Interfaces;
 using Infrastructure.Auth;
-using Infrastructure.Consts;
 using Infrastructure.Data;
 using Infrastructure.Features.Users.Handlers;
 using Infrastructure.Identity;
@@ -9,6 +8,7 @@ using Infrastructure.Identity.Interfaces;
 using Infrastructure.Repositories;
 using Infrastructure.Seeders;
 using Infrastructure.Seeders.Interfaces;
+using Infrastructure.UserContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -101,8 +101,10 @@ public static class DependencyInjection
         });
 
         services.AddHttpContextAccessor();
+        services.AddScoped<IUserContext, UserContext.UserContext>();
         services.AddScoped<IInitialDbSeeder, InitialDbSeeder>();
         services.AddScoped<IApartmentRepository, ApartmentRepository>();
+        services.AddScoped<IBookingRepository, BookingRepository>();
 
         return services;
     }

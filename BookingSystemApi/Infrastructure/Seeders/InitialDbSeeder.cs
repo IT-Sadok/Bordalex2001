@@ -44,5 +44,27 @@ public class InitialDbSeeder(AppDbContext dbContext, RoleManager<IdentityRole> r
 
             await dbConnection.ExecuteAsync(insertApartmentsSql, apartments);
         }
+
+        var bookingsCountQuery = "SELECT COUNT(1) FROM Bookings";
+        var bookingsCount = await dbConnection.QueryAsync<int>(bookingsCountQuery);
+
+        if (bookingsCount.First() == 0)
+        {
+            var insertBookingsSql = 
+                @"
+                INSERT INTO Bookings (ApartmentId, ClientId, StartDate, EndDate, TotalPrice)
+                VALUES (@ApartmentId, @ClientId, @StartDate, @EndDate, @TotalPrice);";
+
+            var bookings = new[] 
+            {
+                new { ApartmentId = Guid.NewGuid(), ClientId = Guid.NewGuid(), StartDate = DateTime.UtcNow.AddDays(10), EndDate = DateTime.UtcNow.AddDays(15), TotalPrice = 375.00m },
+                new { ApartmentId = Guid.NewGuid(), ClientId = Guid.NewGuid(), StartDate = DateTime.UtcNow.AddDays(20), EndDate = DateTime.UtcNow.AddDays(25), TotalPrice = 600.00m },
+                new { ApartmentId = Guid.NewGuid(), ClientId = Guid.NewGuid(), StartDate = DateTime.UtcNow.AddDays(30), EndDate = DateTime.UtcNow.AddDays(35), TotalPrice = 450.00m },
+                new { ApartmentId = Guid.NewGuid(), ClientId = Guid.NewGuid(), StartDate = DateTime.UtcNow.AddDays(40), EndDate = DateTime.UtcNow.AddDays(45), TotalPrice = 1000.00m },
+                new { ApartmentId = Guid.NewGuid(), ClientId = Guid.NewGuid(), StartDate = DateTime.UtcNow.AddDays(50), EndDate = DateTime.UtcNow.AddDays(55), TotalPrice = 550.00m }
+            };
+
+            await dbConnection.ExecuteAsync(insertBookingsSql, bookings);
+        }
     }
 }
