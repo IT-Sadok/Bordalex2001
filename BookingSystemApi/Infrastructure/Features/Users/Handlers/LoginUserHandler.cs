@@ -3,7 +3,6 @@ using Application.Features.Users.Commands;
 using Application.Interfaces;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
-using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Features.Users.Handlers;
 

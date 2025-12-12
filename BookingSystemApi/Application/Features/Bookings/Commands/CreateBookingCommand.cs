@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Application.Common.Mediator.Interfaces;
 
 namespace Application.Features.Bookings.Commands;
 
