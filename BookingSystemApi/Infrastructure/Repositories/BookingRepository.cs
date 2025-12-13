@@ -5,7 +5,7 @@ namespace Infrastructure.Repositories;
 
 public class BookingRepository : IBookingRepository
 {
-    public Task<IEnumerable<Booking>> GetClientBookingsAsync(Guid clientId, CancellationToken ct = default)
+    public Task<IEnumerable<Booking>> GetActiveBookingsAsync(Guid clientId, CancellationToken ct = default)
     {
         throw new NotImplementedException();
     }
