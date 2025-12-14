@@ -1,11 +1,11 @@
 ﻿using Dapper;
 using Infrastructure.Data;
-using Infrastructure.Seeders.Interfaces;
+using Infrastructure.Persistance.Seeders.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
-namespace Infrastructure.Seeders;
+namespace Infrastructure.Persistance.Seeders;
 
 public class InitialDbSeeder(AppDbContext dbContext, RoleManager<IdentityRole> roleManager, IDbConnection dbConnection) : IInitialDbSeeder
 {

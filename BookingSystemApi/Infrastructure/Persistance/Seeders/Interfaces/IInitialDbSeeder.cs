@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using System.Data;
 
-namespace Infrastructure.Seeders.Interfaces;
+namespace Infrastructure.Persistance.Seeders.Interfaces;
 
 public interface IInitialDbSeeder
 {
