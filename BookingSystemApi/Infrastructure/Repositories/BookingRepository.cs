@@ -1,22 +1,41 @@
 ﻿using Application.Interfaces;
+using Dapper;
 using Domain.Entities;
+using System.Data;
 
 namespace Infrastructure.Repositories;
 
-public class BookingRepository : IBookingRepository
+public class BookingRepository(IDbConnection dbConnection) : IBookingRepository
 {
-    public Task<IEnumerable<Booking>> GetActiveBookingsAsync(Guid clientId, CancellationToken ct = default)
+    public async Task<IEnumerable<Booking>> GetActiveBookingsAsync(Guid clientId, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        return await dbConnection.QueryAsync<Booking>(
+            "SELECT * FROM Bookings WHERE ClientId = @ClientId AND EndDate >= @Today",
+            new { ClientId = clientId, Today = DateTime.UtcNow.Date },
+            commandType: CommandType.StoredProcedure);
     }
 
-    public Task<bool> IsAvailableAsync(Guid apartmentId, DateTime startDate, DateTime endDate, CancellationToken ct = default)
+    public async Task<bool> HasOverlappingBookingAsync(Guid apartmentId, DateTime startDate, DateTime endDate, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        return await dbConnection.ExecuteScalarAsync<bool>(
+            "SELECT COUNT(1) FROM Bookings WHERE ApartmentId = @ApartmentId AND StartDate < @EndDate AND EndDate > @StartDate",
+            new { ApartmentId = apartmentId, StartDate = startDate, EndDate = endDate },
+            commandType: CommandType.StoredProcedure);
     }
 
-    public Task CreateAsync(Booking booking, CancellationToken ct = default)
+    public async Task CreateAsync(Booking booking, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        await dbConnection.ExecuteAsync(
+            "INSERT INTO Bookings (Id, ApartmentId, ClientId, StartDate, EndDate, TotalPrice) VALUES (@Id, @ApartmentId, @ClientId, @StartDate, @EndDate, @TotalPrice)",
+            new
+            {
+                booking.Id,
+                booking.ApartmentId,
+                booking.ClientId,
+                booking.StartDate,
+                booking.EndDate,
+                booking.TotalPrice
+            },
+            commandType: CommandType.StoredProcedure);
     }
 }

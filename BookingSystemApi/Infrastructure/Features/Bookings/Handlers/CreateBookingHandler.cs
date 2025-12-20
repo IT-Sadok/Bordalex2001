@@ -10,12 +10,20 @@ public class CreateBookingHandler(IBookingRepository bookingRepository, IApartme
 {
     public async Task<Guid> HandleAsync(CreateBookingCommand request, CancellationToken ct = default) 
     { 
-        var userContextData = userContext.GetCurrentUser() ?? throw new UnauthorizedAccessException("User is not authenticated.");
+        var user = userContext.GetCurrentUser() ?? throw new UnauthorizedAccessException("User is not authenticated.");
 
-        var apartment = await apartmentRepository.GetByIdAsync(request.ApartmentId, ct);
-        if (!apartment.IsAvailable)
+        if (request.EndDate <= request.StartDate)
         {
-            throw new InvalidOperationException("Apartment is not available for booking.");
+            throw new InvalidOperationException("End date must be after start one.");
+        }
+
+        var apartment = await apartmentRepository.GetByIdAsync(request.ApartmentId, ct) ?? throw new InvalidOperationException("Apartment not found.");
+
+        var hasBookingConflict = await bookingRepository.HasOverlappingBookingAsync(request.ApartmentId, request.StartDate.ToDateTime(TimeOnly.MinValue), request.EndDate.ToDateTime(TimeOnly.MinValue), ct);
+
+        if (hasBookingConflict)
+        {
+            throw new InvalidOperationException("The apartment is already booked for the selected dates.");
         }
 
         var totalNights = request.EndDate.DayNumber - request.StartDate.DayNumber;
@@ -23,7 +31,7 @@ public class CreateBookingHandler(IBookingRepository bookingRepository, IApartme
         var booking = new Booking
         {
             Id = Guid.NewGuid(),
-            ClientId = Guid.Parse(userContextData.Id),
+            ClientId = Guid.Parse(user.Id),
             ApartmentId = request.ApartmentId,
             StartDate = request.StartDate,
             EndDate = request.EndDate,

@@ -9,7 +9,7 @@ namespace WebApi.Controllers
     [ApiController]
     public class BookingController(IRequestExecutor request) : ControllerBase
     {
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateBookingAsync([FromBody] CreateBookingCommand command)
         {
             var bookingId = await request.ExecuteAsync<CreateBookingCommand, Guid>(command);
