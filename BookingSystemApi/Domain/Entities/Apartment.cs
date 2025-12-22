@@ -9,4 +9,7 @@ public class Apartment
     public string Address { get; set; } = null!;
     public decimal PricePerNight { get; set; }
     public bool IsAvailable { get; set; } = true;
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public DateTime DeletedAt { get; set; }
 }

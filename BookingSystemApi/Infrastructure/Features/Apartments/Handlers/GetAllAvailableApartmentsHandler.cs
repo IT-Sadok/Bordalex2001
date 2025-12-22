@@ -14,6 +14,7 @@ public class GetAllAvailableApartmentsHandler(IApartmentRepository apartmentRepo
             request.PageNumber,
             request.PageSize,
             request.SortDirection,
+            request.SortBy,
             ct
         );
 

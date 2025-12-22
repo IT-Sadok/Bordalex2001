@@ -2,6 +2,7 @@
 using Dapper;
 using Domain.Entities;
 using Domain.Entities.Common;
+using Domain.Entities.Enums;
 using System.Data;
 
 namespace Infrastructure.Repositories;
@@ -27,7 +28,8 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
     public async Task<(IEnumerable<Apartment>, int)> GetPagedAsync(
         int pageNumber = 1, 
         int pageSize = 20, 
-        SortDirection sortDirection = SortDirection.Ascending, 
+        SortDirection sortDirection = SortDirection.Ascending,
+        ApartmentSortBy sortBy = ApartmentSortBy.CreatedAt,
         CancellationToken ct = default)
     {
         if (pageNumber < 1) pageNumber = 1;
@@ -35,11 +37,17 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
 
         var offset = (pageNumber - 1) * pageSize;
         var sortOrder = sortDirection == SortDirection.Ascending ? "ASC" : "DESC";
-        var query = $@"
-            SELECT * FROM PaginatedApartments
-            ORDER BY Title {sortOrder}
-            OFFSET @Offset LIMIT @PageSize;
-            SELECT COUNT(*) FROM PaginatedApartments";
+        var sortColumn = sortBy switch
+        {
+            ApartmentSortBy.PricePerNight => "PricePerNight",
+            ApartmentSortBy.Title => "Title",
+            ApartmentSortBy.Address => "Address",
+            _ => "CreatedAt"
+        };
+        var query = $@"SELECT * FROM Apartments 
+                       ORDER BY {sortColumn} {sortOrder} 
+                       OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+                       SELECT COUNT(*) FROM Apartments;";
 
         using var multiple = await dbConnection.QueryMultipleAsync(query, new
         {
