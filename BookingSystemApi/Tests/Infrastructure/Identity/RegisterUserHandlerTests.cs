@@ -5,7 +5,7 @@ using Infrastructure.Identity.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 
-namespace Tests.Identity;
+namespace Tests.Infrastructure.Identity;
 
 public class RegisterUserHandlerTests
 {
