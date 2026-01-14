@@ -1,12 +1,12 @@
 ﻿using Application.Features.Users.Commands;
 using Application.Interfaces;
+using Infrastructure.Features.Users.Handlers;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
-using Infrastructure.Users.Handlers;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 
-namespace Tests.Identity;
+namespace Tests.Infrastructure.Identity;
 
 public class LoginUserHandlerTests
 {
