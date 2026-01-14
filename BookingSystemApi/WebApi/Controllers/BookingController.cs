@@ -3,7 +3,6 @@ using Application.Features.Bookings.Commands;
 using Application.Features.Bookings.Queries;
 using Domain.Entities;
 using Domain.Entities.Common;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
