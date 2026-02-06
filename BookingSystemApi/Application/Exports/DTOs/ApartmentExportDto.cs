@@ -11,5 +11,5 @@ public sealed class ApartmentExportDto
     public bool IsAvailable { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public DateTime DeletedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }
