@@ -26,7 +26,7 @@ public class HostRepository(UserManager<AppUser> userManager, AppDbContext dbCon
                 .Where(a => a.HostId == Guid.Parse(host.Id))
                 .Select(a => new ApartmentExportDto
                 {
-                    ExternalId = a.Id.ToString()!,
+                    ExternalId = a.ExternalId,
                     Title = a.Title,
                     Description = a.Description,
                     Address = a.Address,
