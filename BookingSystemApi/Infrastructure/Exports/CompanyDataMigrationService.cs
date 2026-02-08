@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Infrastructure.Exports;
 
-public class CompanyDataExportService(IHostRepository hostRepository) : ICompanyDataExportService
+public class CompanyDataMigrationService(IHostRepository hostRepository) : ICompanyDataMigrationService
 {
     public async Task ExportAsync(Stream output, CancellationToken ct = default)
     {
