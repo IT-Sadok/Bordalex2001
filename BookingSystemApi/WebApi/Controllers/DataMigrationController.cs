@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
-[Route("api/data-migration")]
+/*[Route("api/data-migration")]
 [ApiController]
 public class DataMigrationController(ICompanyDataMigrationService service) : ControllerBase
 {
@@ -16,4 +16,4 @@ public class DataMigrationController(ICompanyDataMigrationService service) : Con
         await service.ExportAsync(Response.Body, ct);
         return new EmptyResult();
     }
-}
+}*/
