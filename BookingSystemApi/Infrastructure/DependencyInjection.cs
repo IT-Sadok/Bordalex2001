@@ -105,6 +105,8 @@ public static class DependencyInjection
         services.AddScoped<IInitialDbSeeder, InitialDbSeeder>();
         services.AddScoped<IApartmentRepository, ApartmentRepository>();
         services.AddScoped<IBookingRepository, BookingRepository>();
+        services.AddScoped<IHostRepository, HostRepository>();
+        services.AddScoped<IImportJobRepository, ImportJobRepository>();
 
         return services;
     }

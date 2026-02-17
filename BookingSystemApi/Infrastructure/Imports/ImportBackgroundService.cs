@@ -7,7 +7,7 @@ public class ImportBackgroundService(IServiceScopeFactory scopeFactory) : Backgr
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        /*while (!stoppingToken.IsCancellationRequested)
         {
             using var scope = scopeFactory.CreateScope();
             var importService = scope.ServiceProvider.GetRequiredService<DataImportService>();
@@ -16,6 +16,6 @@ public class ImportBackgroundService(IServiceScopeFactory scopeFactory) : Backgr
             await importService.ProcessImportAsync(Guid.NewGuid(), stoppingToken);
             // Wait for a certain period before checking for new jobs
             await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
-        }
+        }*/
     }
 }
