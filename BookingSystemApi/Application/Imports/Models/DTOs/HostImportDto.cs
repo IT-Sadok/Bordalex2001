@@ -1,7 +1,6 @@
-﻿
-namespace Application.Exports.DTOs;
+﻿namespace Application.Imports.Models.DTOs;
 
-public sealed class HostExportDto
+public sealed class HostImportDto
 {
     public string ExternalId { get; set; } = null!;
     public string Email { get; set; } = null!;
@@ -9,5 +8,5 @@ public sealed class HostExportDto
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
-    public IReadOnlyCollection<ApartmentExportDto> Apartments { get; set; } = [];
+    public IReadOnlyCollection<ApartmentImportDto> Apartments { get; set; } = [];
 }

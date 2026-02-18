@@ -4,5 +4,5 @@ namespace Application.Imports.Interfaces;
 
 public interface IImportStorage
 {
-    Task<string> SaveAsync(IFormFile file, CancellationToken ct);
+    Task<string> SaveAsync(IFormFile file, CancellationToken ct = default);
 }

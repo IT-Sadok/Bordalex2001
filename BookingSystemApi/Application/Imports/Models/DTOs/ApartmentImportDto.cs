@@ -1,7 +1,6 @@
-﻿
-namespace Application.Exports.DTOs;
+﻿namespace Application.Imports.Models.DTOs;
 
-public sealed class ApartmentExportDto
+public sealed class ApartmentImportDto
 {
     public string ExternalId { get; set; } = null!;
     public string Title { get; set; } = null!;

@@ -1,8 +1,8 @@
-﻿using Application.Exports.DTOs;
+﻿using Application.Imports.Models.DTOs;
 
 namespace Application.Interfaces;
 
 public interface IHostRepository
 {
-    IAsyncEnumerable<HostExportDto> StreamHostsAsync(CancellationToken ct);
+    IAsyncEnumerable<HostImportDto> StreamHostsAsync(CancellationToken ct = default);
 }

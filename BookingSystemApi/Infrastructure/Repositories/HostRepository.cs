@@ -1,4 +1,4 @@
-﻿using Application.Exports.DTOs;
+﻿using Application.Imports.Models.DTOs;
 using Application.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Identity;
@@ -10,7 +10,7 @@ namespace Infrastructure.Repositories;
 
 public class HostRepository(UserManager<AppUser> userManager, AppDbContext dbContext) : IHostRepository
 {
-    public async IAsyncEnumerable<HostExportDto> StreamHostsAsync([EnumeratorCancellation] CancellationToken ct = default) 
+    public async IAsyncEnumerable<HostImportDto> StreamHostsAsync([EnumeratorCancellation] CancellationToken ct = default) 
     { 
         var hostRoleId = await dbContext.Roles.Where(r => r.Name == "Host").Select(r => r.Id).SingleAsync(ct);
 
@@ -24,7 +24,7 @@ public class HostRepository(UserManager<AppUser> userManager, AppDbContext dbCon
             var apartments = await dbContext.Apartments
                 .AsNoTracking()
                 .Where(a => a.HostId == Guid.Parse(host.Id))
-                .Select(a => new ApartmentExportDto
+                .Select(a => new ApartmentImportDto
                 {
                     ExternalId = a.ExternalId,
                     Title = a.Title,
@@ -37,7 +37,7 @@ public class HostRepository(UserManager<AppUser> userManager, AppDbContext dbCon
                     DeletedAt = a.DeletedAt
                 }).ToListAsync(ct);
 
-            yield return new HostExportDto
+            yield return new HostImportDto
             {
                 ExternalId = host.Id!,
                 Email = host.Email!,

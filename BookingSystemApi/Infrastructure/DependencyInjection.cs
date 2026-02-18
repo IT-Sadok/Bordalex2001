@@ -1,10 +1,12 @@
 ﻿using Application.Common.Mediator.Interfaces;
+using Application.Imports.Interfaces;
 using Application.Interfaces;
 using Infrastructure.Auth;
 using Infrastructure.Data;
 using Infrastructure.Features.Users.Handlers;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
+using Infrastructure.Imports;
 using Infrastructure.Persistance.Seeders;
 using Infrastructure.Persistance.Seeders.Interfaces;
 using Infrastructure.Repositories;
@@ -107,6 +109,7 @@ public static class DependencyInjection
         services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<IHostRepository, HostRepository>();
         services.AddScoped<IImportJobRepository, ImportJobRepository>();
+        services.AddScoped<IJsonBatchReader, JsonBatchReader>();
 
         return services;
     }

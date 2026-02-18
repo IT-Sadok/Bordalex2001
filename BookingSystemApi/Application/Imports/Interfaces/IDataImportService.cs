@@ -2,5 +2,5 @@
 
 public interface IDataImportService
 {
-    Task ProcessImportAsync(Guid importJobId, CancellationToken ct = default);
+    Task ProcessImportAsync(Guid jobId, string filePath, CancellationToken ct = default);
 }

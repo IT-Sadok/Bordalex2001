@@ -1,6 +1,8 @@
-﻿namespace Application.Imports.Interfaces;
+﻿using Application.Imports.Models;
+
+namespace Application.Imports.Interfaces;
 
 public interface IJsonBatchReader
 {
-    Task<IEnumerable<T>> ReadBatchAsync<T>(string filePath, int batchSize, CancellationToken ct = default);
+    IAsyncEnumerable<List<ImportEnvelope>> ReadBatchesAsync(Stream jsonStream, int batchSize, CancellationToken ct = default);
 }

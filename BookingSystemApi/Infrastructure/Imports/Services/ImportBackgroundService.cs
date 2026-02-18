@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Infrastructure.Imports;
+namespace Infrastructure.Imports.Services;
 
 public class ImportBackgroundService(IServiceScopeFactory scopeFactory) : BackgroundService
 {
