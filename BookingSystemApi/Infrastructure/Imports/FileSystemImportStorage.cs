@@ -7,7 +7,7 @@ public class FileSystemImportStorage : IImportStorage
 {
     private readonly string rootDirectory = "ImportStorage";
 
-    public async Task<string> SaveAsync(IFormFile file, CancellationToken ct = default)
+    public async Task<string> SaveFileAsync(IFormFile file, CancellationToken ct = default)
     {
         var fileName = $"{Guid.NewGuid()}.json";
         var filePath = Path.Combine(rootDirectory, fileName);

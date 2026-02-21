@@ -4,6 +4,7 @@ namespace Infrastructure.Identity;
 
 public class AppUser : IdentityUser
 {
-    public string DisplayName { get; set; } = string.Empty;
+    public string? ExternalId { get; set; }
+    public string? DisplayName { get; set; }
     public DateOnly DateOfBirth { get; set; }
 }

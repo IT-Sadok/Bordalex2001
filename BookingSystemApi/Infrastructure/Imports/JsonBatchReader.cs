@@ -1,5 +1,5 @@
 ﻿using Application.Imports.Interfaces;
-using Application.Imports.Models;
+using Application.Imports.Models.DTOs;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
@@ -13,11 +13,11 @@ public class JsonBatchReader : IJsonBatchReader
         DefaultBufferSize = 1024 * 64
     };
 
-    public async IAsyncEnumerable<List<ImportEnvelope>> ReadBatchesAsync(Stream jsonStream, int batchSize, [EnumeratorCancellation] CancellationToken ct = default)
+    public async IAsyncEnumerable<List<ImportEnvelopeDto>> ReadBatchesAsync(Stream jsonStream, int batchSize, [EnumeratorCancellation] CancellationToken ct = default)
     {
-        var batch = new List<ImportEnvelope>(batchSize);
+        var batch = new List<ImportEnvelopeDto>(batchSize);
 
-        await foreach (var item in JsonSerializer.DeserializeAsyncEnumerable<ImportEnvelope>(jsonStream, options, ct))
+        await foreach (var item in JsonSerializer.DeserializeAsyncEnumerable<ImportEnvelopeDto>(jsonStream, options, ct))
         {
             if (item is null)
                 continue;
@@ -27,7 +27,7 @@ public class JsonBatchReader : IJsonBatchReader
             if (batch.Count >= batchSize)
             {
                 yield return batch;
-                batch = new List<ImportEnvelope>(batchSize);
+                batch = new List<ImportEnvelopeDto>(batchSize);
             }
         }
 

@@ -18,7 +18,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 
         builder.Entity<Apartment>().Property(a => a.PricePerNight).HasColumnType("decimal(18,2)");
         builder.Entity<Booking>().Property(b => b.TotalPrice).HasColumnType("decimal(18,2)");
-        builder.Entity<Host>().HasMany(h => h.Apartments).WithOne(a => a.Host).HasForeignKey(a => a.HostId);
+        builder.Entity<Host>().HasMany(h => h.Apartments).WithOne(a => a.Host).HasForeignKey(a => a.HostId).OnDelete(DeleteBehavior.Cascade);
         builder.Entity<ImportJob>().Property(j => j.Status).HasConversion<string>();
+        builder.Entity<AppUser>().HasIndex(u => u.ExternalId).IsUnique();
+        builder.Entity<Apartment>().HasIndex(a => a.ExternalId).IsUnique();
+        builder.Entity<Host>().HasIndex(h => h.ExternalId).IsUnique();
+        builder.Entity<AppUser>().Property(u => u.ExternalId).IsRequired();
+        builder.Entity<Apartment>().Property(a => a.ExternalId).IsRequired();
+        builder.Entity<Host>().Property(h => h.ExternalId).IsRequired();
     }
 }
