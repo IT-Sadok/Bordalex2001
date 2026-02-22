@@ -4,8 +4,7 @@ public class Apartment
 {
     public Guid Id { get; set; }
     public string ExternalId { get; set; } = null!;
-    public Guid HostId { get; set; }
-    public Host Host { get; set; } = null!;
+    public string HostId { get; set; } = null!;
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
     public string Address { get; set; } = null!;

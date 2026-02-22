@@ -73,14 +73,15 @@ public sealed class ImportBatchProcessor(AppDbContext dbContext) : IImportBatchP
                         {
                             Id = Guid.NewGuid(),
                             ExternalId = aptDto.ExternalId,
-                            HostId = Guid.Parse(host.Id),
+                            HostId = host.Id,       
                             Title = aptDto.Title,
                             Description = aptDto.Description,
                             Address = aptDto.Address,
                             PricePerNight = aptDto.PricePerNight,
                             IsAvailable = aptDto.IsAvailable,
                             CreatedAt = aptDto.CreatedAt,
-                            UpdatedAt = aptDto.UpdatedAt
+                            UpdatedAt = aptDto.UpdatedAt,
+                            DeletedAt = aptDto.DeletedAt
                         };
                         
                         dbContext.Apartments.Add(apt);
@@ -88,13 +89,14 @@ public sealed class ImportBatchProcessor(AppDbContext dbContext) : IImportBatchP
                     }
                     else
                     {
-                        apt.HostId = Guid.Parse(host.Id);
+                        apt.HostId = host.Id;
                         apt.Title = aptDto.Title;
                         apt.Description = aptDto.Description;
                         apt.Address = aptDto.Address;
                         apt.PricePerNight = aptDto.PricePerNight;
                         apt.IsAvailable = aptDto.IsAvailable;
                         apt.UpdatedAt = aptDto.UpdatedAt;
+                        apt.DeletedAt = aptDto.DeletedAt;
                     }
 
                     processed++;
