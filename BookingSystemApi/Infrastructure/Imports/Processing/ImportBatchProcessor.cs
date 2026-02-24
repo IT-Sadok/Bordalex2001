@@ -14,7 +14,7 @@ public sealed class ImportBatchProcessor(AppDbContext dbContext) : IImportBatchP
         if (batch.Count == 0)
             return 0;
 
-        await using var tx = await dbContext.Database.BeginTransactionAsync(ct);
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(ct);
 
         try
         {
@@ -59,7 +59,7 @@ public sealed class ImportBatchProcessor(AppDbContext dbContext) : IImportBatchP
                 .Select(a => a.ExternalId).Distinct().ToList();
 
             var existingApartments = await dbContext.Apartments
-                .Where(a => apartmentExternalIds.Contains(a.ExternalId)).ToDictionaryAsync(a => a.ExternalId, ct);
+                .Where(a => apartmentExternalIds.Contains(a.ExternalId)).ToDictionaryAsync(a => a.ExternalId!, ct);
 
             foreach (var envelope in batch)
             {
@@ -104,13 +104,13 @@ public sealed class ImportBatchProcessor(AppDbContext dbContext) : IImportBatchP
             }
 
             await dbContext.SaveChangesAsync(ct);
-            await tx.CommitAsync(ct);
+            await transaction.CommitAsync(ct);
 
             return processed;
         }
         catch
         {
-            await tx.RollbackAsync(ct);
+            await transaction.RollbackAsync(ct);
             throw;
         }
     }

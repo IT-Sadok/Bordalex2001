@@ -1,21 +1,92 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Application.Imports.Interfaces;
+using Application.Imports.Models.DTOs;
+using Domain.Entities.Enums;
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace Infrastructure.Imports.Services;
 
-public class ImportBackgroundService(IServiceScopeFactory scopeFactory) : BackgroundService
+public sealed class ImportBackgroundService(IServiceScopeFactory scopeFactory, ILogger<ImportBackgroundService> logger) : BackgroundService
 {
+    private static readonly JsonSerializerOptions jsonOptions = new() { PropertyNameCaseInsensitive = true };
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        /*while (!stoppingToken.IsCancellationRequested)
+        logger.LogInformation("Import background service started");
+
+        while (!stoppingToken.IsCancellationRequested)
         {
-            using var scope = scopeFactory.CreateScope();
-            var importService = scope.ServiceProvider.GetRequiredService<DataImportService>();
-            // Here you would typically check for pending import jobs and process them
-            // For demonstration, we will just call the import service directly
-            await importService.ProcessImportAsync(Guid.NewGuid(), stoppingToken);
-            // Wait for a certain period before checking for new jobs
-            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
-        }*/
+            try
+            {
+                await ProcessNextJobAsync(stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error processing import job");
+            }
+            
+            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+        }
+
+        logger.LogInformation("Import background service stopped");
+    }
+
+    private async Task ProcessNextJobAsync(CancellationToken ct)
+    {
+        using var scope = scopeFactory.CreateScope();
+
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var processor = scope.ServiceProvider.GetRequiredService<IImportBatchProcessor>();
+
+        var job = await dbContext.ImportJobs
+            .Where(j => j.Status == ImportStatus.Pending).OrderBy(j => j.CreatedAt).FirstOrDefaultAsync(ct);
+
+        if (job == null)
+            return;
+
+        try
+        {
+            job.Status = ImportStatus.InProgress;
+            job.StartedAt = DateTime.UtcNow;
+            await dbContext.SaveChangesAsync(ct);
+
+            var envelopes = await LoadBatchAsync(job.FilePath, ct);
+
+            job.TotalRecords = envelopes.Sum(e => e.Apartments.Count);
+            await dbContext.SaveChangesAsync(ct);
+
+            var processed = await processor.ProcessBatchAsync(job.Id, envelopes, ct);
+
+            job.ProcessedRecords = processed;
+            job.Status = ImportStatus.Completed;
+            job.CompletedAt = DateTime.UtcNow;
+
+            await dbContext.SaveChangesAsync(ct);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error processing import job {JobId}", job.Id);
+
+            job.Status = ImportStatus.Failed;
+            job.ErrorMessage = ex.Message;
+            job.CompletedAt = DateTime.UtcNow;
+
+            await dbContext.SaveChangesAsync(ct);
+
+            throw;
+        }
+    }
+
+    private static async Task<IReadOnlyCollection<ImportEnvelopeDto>> LoadBatchAsync(string filePath, CancellationToken ct)
+    {
+        var json = await File.ReadAllTextAsync(filePath, ct);
+
+        var data = JsonSerializer.Deserialize<List<ImportEnvelopeDto>>(json, jsonOptions);
+
+        return data ?? [];
     }
 }

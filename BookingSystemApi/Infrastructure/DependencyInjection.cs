@@ -7,6 +7,7 @@ using Infrastructure.Features.Users.Handlers;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
 using Infrastructure.Imports;
+using Infrastructure.Imports.Services;
 using Infrastructure.Persistance.Seeders;
 using Infrastructure.Persistance.Seeders.Interfaces;
 using Infrastructure.Repositories;
@@ -110,6 +111,7 @@ public static class DependencyInjection
         services.AddScoped<IHostRepository, HostRepository>();
         services.AddScoped<IImportJobRepository, ImportJobRepository>();
         services.AddScoped<IJsonBatchReader, JsonBatchReader>();
+        services.AddHostedService<ImportBackgroundService>();
 
         return services;
     }

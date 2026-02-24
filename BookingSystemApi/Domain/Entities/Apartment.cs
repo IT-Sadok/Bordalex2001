@@ -3,7 +3,7 @@
 public class Apartment
 {
     public Guid Id { get; set; }
-    public string ExternalId { get; set; } = null!;
+    public string? ExternalId { get; set; }
     public string HostId { get; set; } = null!;
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
