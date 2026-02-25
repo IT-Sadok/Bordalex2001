@@ -15,17 +15,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<Apartment>().Property(a => a.PricePerNight).HasColumnType("decimal(18,2)");
-        builder.Entity<Booking>().Property(b => b.TotalPrice).HasColumnType("decimal(18,2)");
-        builder.Entity<Apartment>().HasOne<AppUser>().WithMany().HasForeignKey(a => a.HostId).OnDelete(DeleteBehavior.Restrict);
-        builder.Entity<Booking>().HasOne<AppUser>().WithMany().HasForeignKey(b => b.ClientId).OnDelete(DeleteBehavior.Restrict);
-        builder.Entity<Booking>().HasOne<Apartment>().WithMany().HasForeignKey(b => b.ApartmentId).OnDelete(DeleteBehavior.Cascade);
-        builder.Entity<ImportJob>().Property(j => j.Status).HasConversion<string>();
-        builder.Entity<AppUser>().HasIndex(u => u.ExternalId).IsUnique();
-        builder.Entity<Apartment>().HasIndex(a => a.ExternalId).IsUnique();
-        builder.Entity<AppUser>().Property(u => u.ExternalId).IsRequired();
-        builder.Entity<Apartment>().Property(a => a.ExternalId).IsRequired();
-        builder.Entity<Apartment>().Property(a => a.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-        builder.Entity<Booking>().Property(b => b.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }
