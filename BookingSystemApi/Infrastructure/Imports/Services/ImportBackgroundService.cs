@@ -59,7 +59,11 @@ public sealed class ImportBackgroundService(IServiceScopeFactory scopeFactory, I
             job.TotalRecords = envelopes.Sum(e => e.Apartments.Count);
             await dbContext.SaveChangesAsync(ct);
 
+            logger.LogInformation("Processing import job {JobId}", job.Id);
+
             var processed = await processor.ProcessBatchAsync(job.Id, envelopes, ct);
+
+            logger.LogInformation("Completed processing import job {JobId}. Processed {ProcessedCount} of {TotalCount} records", job.Id, processed, job.TotalRecords);
 
             job.ProcessedRecords = processed;
             job.Status = ImportStatus.Completed;

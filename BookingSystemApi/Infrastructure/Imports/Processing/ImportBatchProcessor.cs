@@ -3,16 +3,26 @@ using Application.Imports.Models.DTOs;
 using Domain.Entities;
 using Infrastructure.Data;
 using Infrastructure.Identity;
+using Infrastructure.Identity.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Imports.Processing;
 
-public sealed class ImportBatchProcessor(AppDbContext dbContext) : IImportBatchProcessor
+public sealed class ImportBatchProcessor(
+    AppDbContext dbContext, 
+    IUserManagerWrapper<AppUser> userManager,
+    IOptions<IdentityOptionsConfiguration> identityOptions) : IImportBatchProcessor
 {
-    public async Task<int> ProcessBatchAsync(Guid jobId, IReadOnlyCollection<ImportEnvelopeDto> batch, CancellationToken ct = default)
+    public async Task<int> ProcessBatchAsync(
+        Guid jobId, 
+        IReadOnlyCollection<ImportEnvelopeDto> batch, 
+        CancellationToken ct = default)
     {
         if (batch.Count == 0)
             return 0;
+
+        var defaultPassword = identityOptions.Value.DefaultImportPassword;
 
         await using var transaction = await dbContext.Database.BeginTransactionAsync(ct);
 
@@ -39,9 +49,17 @@ public sealed class ImportBatchProcessor(AppDbContext dbContext) : IImportBatchP
                         Email = hostDto.Email,
                         UserName = hostDto.Email,
                         DisplayName = hostDto.DisplayName,
+                        EmailConfirmed = true
                     };
 
-                    dbContext.Users.Add(host);
+                    var result = await userManager.CreateAsync(host, defaultPassword);
+
+                    if (!result.Succeeded)
+                    {
+                        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                        throw new InvalidOperationException($"Failed to create user for Host {hostDto.Email}: {errors}");
+                    }
+
                     existingHosts[hostDto.ExternalId] = host;
                 }
                 else

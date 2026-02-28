@@ -5,6 +5,9 @@ namespace Application.Imports;
 
 public class DataImportService(IJsonBatchReader reader, IImportJobRepository jobRepo) : IDataImportService
 {
+    private const int BatchSize = 1000;
+    private const int BufferSize = 1024 * 128;
+
     public async Task ProcessImportAsync(Guid jobId, string filePath, CancellationToken ct = default)
     {
          await jobRepo.MarkInProgressAsync(jobId, ct);
@@ -14,13 +17,12 @@ public class DataImportService(IJsonBatchReader reader, IImportJobRepository job
              FileMode.Open, 
              FileAccess.Read, 
              FileShare.Read, 
-             bufferSize: 1024 * 128, 
+             BufferSize, 
              FileOptions.SequentialScan);
          
-        await foreach (var batch in reader.ReadBatchesAsync(stream, batchSize: 500, ct))
+        await foreach (var batch in reader.ReadBatchesAsync(stream, BatchSize, ct))
         {
             await jobRepo.IncrementProcessedAsync(jobId, batch.Count, ct);
-            
             await Task.Delay(100, ct);
         }
 

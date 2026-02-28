@@ -9,7 +9,7 @@ public class UserManagerWrapper(UserManager<AppUser> userManager) : IUserManager
         await userManager.FindByEmailAsync(email);
 
     public async Task<IEnumerable<string>> GetRolesAsync(AppUser user) =>
-        await userManager.GetRolesAsync(userManager.Users.First(u => u.Id == user.Id));
+        await userManager.GetRolesAsync(user);
 
     public async Task<IdentityResult> CreateAsync(AppUser user, string password) =>
         await userManager.CreateAsync(user, password);

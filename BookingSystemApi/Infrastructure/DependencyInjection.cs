@@ -28,6 +28,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+        services.Configure<IdentityOptionsConfiguration>(configuration.GetSection("Identity"));
 
         services.AddDbContext<AppDbContext>(options =>
         {
