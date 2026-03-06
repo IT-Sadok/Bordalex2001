@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Application.Interfaces;
+namespace Application.Features.Imports.Interfaces;
 
 public interface IImportJobRepository
 {

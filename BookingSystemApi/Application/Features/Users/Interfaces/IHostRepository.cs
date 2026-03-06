@@ -1,6 +1,6 @@
-﻿using Application.Imports.Models.DTOs;
+﻿using Application.Features.Imports.DTOs;
 
-namespace Application.Interfaces;
+namespace Application.Features.Users.Interfaces;
 
 public interface IHostRepository
 {

@@ -1,5 +1,5 @@
-﻿using Application.Imports.Models.DTOs;
-using Application.Interfaces;
+﻿using Application.Features.Imports.DTOs;
+using Application.Features.Users.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;

@@ -1,6 +1,6 @@
 ﻿using Application.Common.Mediator.Interfaces;
+using Application.Features.Bookings.Interfaces;
 using Application.Features.Bookings.Queries;
-using Application.Interfaces;
 using Domain.Entities;
 using Domain.Entities.Common;
 using Infrastructure.UserContext;

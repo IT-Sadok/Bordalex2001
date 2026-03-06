@@ -1,5 +1,5 @@
-﻿using Application.Imports.Interfaces;
-using Application.Imports.Models.DTOs;
+﻿using Application.Features.Imports.DTOs;
+using Application.Features.Imports.Interfaces;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 

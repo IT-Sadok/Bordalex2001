@@ -1,4 +1,4 @@
-﻿namespace Application.Interfaces;
+﻿namespace Application.Features.Users.Interfaces;
 
 public interface IJwtTokenGenerator
 {

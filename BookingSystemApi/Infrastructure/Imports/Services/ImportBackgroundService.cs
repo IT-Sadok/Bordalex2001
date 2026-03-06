@@ -1,5 +1,5 @@
-﻿using Application.Imports.Interfaces;
-using Application.Imports.Models.DTOs;
+﻿using Application.Features.Imports.DTOs;
+using Application.Features.Imports.Interfaces;
 using Domain.Entities.Enums;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

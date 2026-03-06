@@ -1,6 +1,7 @@
 ﻿using Application.Common.Mediator.Interfaces;
+using Application.Features.Apartments.Interfaces;
 using Application.Features.Bookings.Commands;
-using Application.Interfaces;
+using Application.Features.Bookings.Interfaces;
 using Domain.Entities;
 using Infrastructure.UserContext;
 

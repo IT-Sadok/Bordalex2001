@@ -1,6 +1,6 @@
 ﻿using Application.Common.Mediator.Interfaces;
+using Application.Features.Apartments.Interfaces;
 using Application.Features.Apartments.Queries;
-using Application.Interfaces;
 using Domain.Entities;
 using Domain.Entities.Common;
 

@@ -1,6 +1,6 @@
-﻿using Application.Imports.Models.DTOs;
+﻿using Application.Features.Imports.DTOs;
 
-namespace Application.Imports.Interfaces;
+namespace Application.Features.Imports.Interfaces;
 
 public interface IImportBatchProcessor
 {

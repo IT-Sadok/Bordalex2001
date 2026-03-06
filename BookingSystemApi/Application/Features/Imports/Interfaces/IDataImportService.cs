@@ -1,4 +1,4 @@
-﻿namespace Application.Imports.Interfaces;
+﻿namespace Application.Features.Imports.Interfaces;
 
 public interface IDataImportService
 {

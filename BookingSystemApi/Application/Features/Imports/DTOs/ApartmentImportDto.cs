@@ -1,4 +1,4 @@
-﻿namespace Application.Imports.Models.DTOs;
+﻿namespace Application.Features.Imports.DTOs;
 
 public sealed class ApartmentImportDto
 {
