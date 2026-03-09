@@ -32,7 +32,7 @@ public class CreateBookingHandler(IBookingRepository bookingRepository, IApartme
         var booking = new Booking
         {
             Id = Guid.NewGuid(),
-            ClientId = Guid.Parse(user.Id),
+            ClientId = user.Id,
             ApartmentId = request.ApartmentId,
             StartDate = request.StartDate,
             EndDate = request.EndDate,

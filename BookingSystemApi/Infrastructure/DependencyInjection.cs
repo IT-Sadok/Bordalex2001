@@ -3,12 +3,14 @@ using Application.Features.Apartments.Interfaces;
 using Application.Features.Bookings.Interfaces;
 using Application.Features.Imports.Interfaces;
 using Application.Features.Users.Interfaces;
+using Application.Imports;
 using Infrastructure.Auth;
 using Infrastructure.Data;
 using Infrastructure.Features.Users.Handlers;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
 using Infrastructure.Imports;
+using Infrastructure.Imports.Processing;
 using Infrastructure.Imports.Services;
 using Infrastructure.Persistance.Seeders;
 using Infrastructure.Persistance.Seeders.Interfaces;
@@ -111,9 +113,13 @@ public static class DependencyInjection
         services.AddScoped<IInitialDbSeeder, InitialDbSeeder>();
         services.AddScoped<IApartmentRepository, ApartmentRepository>();
         services.AddScoped<IBookingRepository, BookingRepository>();
-        services.AddScoped<IHostRepository, HostRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IImportJobRepository, ImportJobRepository>();
         services.AddScoped<IJsonBatchReader, JsonBatchReader>();
+        services.AddScoped<IImportBatchProcessor, ImportBatchProcessor>();
+        services.AddScoped<IImportStorage, FileSystemImportStorage>();
+        services.AddScoped<IDataImportService, DataImportService>();
+
         services.AddHostedService<ImportBackgroundService>();
 
         return services;

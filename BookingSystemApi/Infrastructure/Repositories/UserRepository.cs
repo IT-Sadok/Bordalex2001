@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace Infrastructure.Repositories;
 
-public class HostRepository(UserManager<AppUser> userManager, AppDbContext dbContext) : IHostRepository
+public class UserRepository(UserManager<AppUser> userManager, AppDbContext dbContext) : IUserRepository
 {
     public async IAsyncEnumerable<HostImportDto> StreamHostsAsync([EnumeratorCancellation] CancellationToken ct = default) 
     { 
@@ -23,7 +23,7 @@ public class HostRepository(UserManager<AppUser> userManager, AppDbContext dbCon
         {
             var apartments = await dbContext.Apartments
                 .AsNoTracking()
-                .Where(a => a.HostId == Guid.Parse(host.Id))
+                .Where(a => a.HostId == host.Id)
                 .Select(a => new ApartmentImportDto
                 {
                     ExternalId = a.ExternalId,
