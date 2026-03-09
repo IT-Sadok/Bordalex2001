@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿using Application.Features.Bookings.Interfaces;
 using Dapper;
 using Domain.Entities;
 using Domain.Entities.Common;

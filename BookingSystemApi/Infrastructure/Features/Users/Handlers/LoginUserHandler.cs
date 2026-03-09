@@ -1,6 +1,6 @@
 ﻿using Application.Common.Mediator.Interfaces;
 using Application.Features.Users.Commands;
-using Application.Interfaces;
+using Application.Features.Users.Interfaces;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
 

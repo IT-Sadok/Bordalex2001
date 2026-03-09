@@ -2,7 +2,7 @@
 using Domain.Entities.Common;
 using Domain.Entities.Enums;
 
-namespace Application.Interfaces;
+namespace Application.Features.Apartments.Interfaces;
 
 public interface IApartmentRepository
 {

@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Entities.Common;
 
-namespace Application.Interfaces;
+namespace Application.Features.Bookings.Interfaces;
 
 public interface IBookingRepository
 {

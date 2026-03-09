@@ -1,6 +1,7 @@
 ﻿using Application.Common.Mediator.Interfaces;
+using Application.Features.Apartments.Interfaces;
 using Application.Features.Bookings.Commands;
-using Application.Interfaces;
+using Application.Features.Bookings.Interfaces;
 using Domain.Entities;
 using Infrastructure.UserContext;
 
@@ -31,7 +32,7 @@ public class CreateBookingHandler(IBookingRepository bookingRepository, IApartme
         var booking = new Booking
         {
             Id = Guid.NewGuid(),
-            ClientId = Guid.Parse(user.Id),
+            ClientId = user.Id,
             ApartmentId = request.ApartmentId,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
