@@ -1,49 +1,34 @@
 ﻿using Application.Features.Imports.DTOs;
 using Application.Features.Users.Interfaces;
-using Infrastructure.Data;
-using Infrastructure.Identity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Dapper;
+using System.Data;
 using System.Runtime.CompilerServices;
 
 namespace Infrastructure.Repositories;
 
-public class UserRepository(UserManager<AppUser> userManager, AppDbContext dbContext) : IUserRepository
+public class UserRepository(IDbConnection dbConnection) : IUserRepository
 {
-    public async IAsyncEnumerable<HostImportDto> StreamHostsAsync([EnumeratorCancellation] CancellationToken ct = default) 
-    { 
-        var hostRoleId = await dbContext.Roles.Where(r => r.Name == "Host").Select(r => r.Id).SingleAsync(ct);
+    public async IAsyncEnumerable<HostImportDto> StreamHostsAsync([EnumeratorCancellation] CancellationToken ct = default)
+    {
+        var hostRoleId = await dbConnection.QueryFirstAsync<Guid>("SELECT Id FROM AspNetRoles WHERE Name = @Name", new { Name = "Host" });
 
-        var hostsQuery = from user in dbContext.Users.AsNoTracking()
-                         join userRole in dbContext.UserRoles on user.Id equals userRole.UserId
-                         where userRole.RoleId == hostRoleId
-                         select user;
+        var hostsQuery = @"
+            SELECT 
+                u.Id AS ExternalId,
+                u.Email,
+                u.DisplayName,
+                u.CreatedAt,
+                u.UpdatedAt,
+                u.DeletedAt
+            FROM AspNetUsers u
+            INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
+            WHERE ur.RoleId = @HostRoleId";
 
-        await foreach (var host in hostsQuery.AsAsyncEnumerable().WithCancellation(ct))
+        var hosts = await dbConnection.QueryAsync<HostImportDto>(hostsQuery, new { HostRoleId = hostRoleId });
+
+        foreach (var host in hosts)
         {
-            var apartments = await dbContext.Apartments
-                .AsNoTracking()
-                .Where(a => a.HostId == host.Id)
-                .Select(a => new ApartmentImportDto
-                {
-                    ExternalId = a.ExternalId,
-                    Title = a.Title,
-                    Description = a.Description,
-                    Address = a.Address,
-                    PricePerNight = a.PricePerNight,
-                    IsAvailable = a.IsAvailable,
-                    CreatedAt = a.CreatedAt,
-                    UpdatedAt = a.UpdatedAt,
-                    DeletedAt = a.DeletedAt
-                }).ToListAsync(ct);
-
-            yield return new HostImportDto
-            {
-                ExternalId = host.Id!,
-                Email = host.Email!,
-                DisplayName = host.DisplayName,
-                Apartments = apartments
-            };
+            yield return host;
         }
     }
 }
