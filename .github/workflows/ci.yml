@@ -42,11 +42,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-nuget
 
-    - name: Check formatting
-      run: dotnet format --verify-no-changes
-
     - name: Check vulnerable packages
       run: dotnet list package --vulnerable
+
+    - name: Check formatting
+      run: dotnet format ${{ env.SOLUTION_PATH }} --verify-no-changes
 
     - name: Restore dependencies
       run: dotnet restore ${{ env.SOLUTION_PATH }}
