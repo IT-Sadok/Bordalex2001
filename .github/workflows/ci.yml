@@ -43,7 +43,7 @@ jobs:
           ${{ runner.os }}-nuget
 
     - name: Check vulnerable packages
-      run: dotnet list package ${{ env.SOLUTION_PATH }} --vulnerable
+      run: dotnet list ${{ env.SOLUTION_PATH }} package --vulnerable
 
     - name: Check formatting
       run: dotnet format ${{ env.SOLUTION_PATH }} --verify-no-changes
