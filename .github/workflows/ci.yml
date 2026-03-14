@@ -9,8 +9,8 @@ on:
 env:
   DOTNET_VERSION: "9.x"
   NUGET_PACKAGES_DIR: "~/.nuget/packages"
-  SOLUTION_PATH: "BookingSystemApi.sln"
-  API_PROJECT_PATH: "WebApi/WebApi.csproj"
+  SOLUTION_PATH: "BookingSystemApi/BookingSystemApi.sln"
+  API_PROJECT_PATH: "BookingSystemApi/WebApi/WebApi.csproj"
   PUBLISH_DIR: "./publish"
 
 jobs:
