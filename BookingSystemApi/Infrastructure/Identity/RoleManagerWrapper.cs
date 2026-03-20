@@ -1,5 +1,4 @@
-﻿using Infrastructure.Consts;
-using Infrastructure.Identity.Interfaces;
+﻿using Infrastructure.Identity.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Identity;
@@ -8,4 +7,7 @@ public class RoleManagerWrapper(RoleManager<IdentityRole> roleManager) : IRoleMa
 {
     public Task<bool> RoleExistsAsync(string roleName) =>
         roleManager.RoleExistsAsync(roleName);
+
+    public Task<IdentityResult> CreateAsync(string roleName) =>
+        roleManager.CreateAsync(new IdentityRole(roleName));
 }
