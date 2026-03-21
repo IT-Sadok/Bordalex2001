@@ -6,5 +6,5 @@ namespace Infrastructure.Persistance.Seeders.Interfaces;
 
 public interface IInitialDbSeeder
 {
-    Task MigrateAndSeedAsync(CancellationToken ct = default);
+    Task SeedRolesAsync(CancellationToken ct = default);
 }

@@ -10,18 +10,18 @@ public class UserRepository(IDbConnection dbConnection) : IUserRepository
 {
     public async IAsyncEnumerable<HostImportDto> StreamHostsAsync([EnumeratorCancellation] CancellationToken ct = default)
     {
-        var hostRoleId = await dbConnection.QueryFirstAsync<Guid>("SELECT Id FROM AspNetRoles WHERE Name = @Name", new { Name = "Host" });
+        var hostRoleId = await dbConnection.QueryFirstAsync<Guid>("SELECT \"Id\" FROM \"AspNetRoles\" WHERE \"Name\" = @Name", new { Name = "Host" });
 
         var hostsQuery = @"
             SELECT 
-                u.Id AS ExternalId,
+                u.Id AS ""ExternalId"",
                 u.Email,
                 u.DisplayName,
                 u.CreatedAt,
                 u.UpdatedAt,
                 u.DeletedAt
-            FROM AspNetUsers u
-            INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
+            FROM ""AspNetUsers"" u
+            INNER JOIN ""AspNetUserRoles"" ur ON u.Id = ur.UserId
             WHERE ur.RoleId = @HostRoleId";
 
         var hosts = await dbConnection.QueryAsync<HostImportDto>(hostsQuery, new { HostRoleId = hostRoleId });

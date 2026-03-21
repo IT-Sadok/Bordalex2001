@@ -7,7 +7,4 @@ public class RoleManagerWrapper(RoleManager<IdentityRole> roleManager) : IRoleMa
 {
     public Task<bool> RoleExistsAsync(string roleName) =>
         roleManager.RoleExistsAsync(roleName);
-
-    public Task<IdentityResult> CreateAsync(string roleName) =>
-        roleManager.CreateAsync(new IdentityRole(roleName));
 }

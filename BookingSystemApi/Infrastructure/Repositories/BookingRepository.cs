@@ -17,14 +17,14 @@ public class BookingRepository(IDbConnection dbConnection) : IBookingRepository
         var offset = (pageNumber - 1) * pageSize;
 
         const string itemsQuery = @"
-            SELECT * FROM Bookings 
-            WHERE ClientId = @ClientId AND EndDate >= @Today
-            ORDER BY StartDate ASC
+            SELECT * FROM ""Bookings"" 
+            WHERE ""ClientId"" = @ClientId AND ""EndDate"" >= @Today
+            ORDER BY ""StartDate"" ASC
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";
 
         const string countQuery = @"
-            SELECT COUNT(*) FROM Bookings 
-            WHERE ClientId = @ClientId AND EndDate >= @Today;";
+            SELECT COUNT(*) FROM ""Bookings"" 
+            WHERE ""ClientId"" = @ClientId AND ""EndDate"" >= @Today;";
 
         using var multiple = await dbConnection.QueryMultipleAsync(
             $"{itemsQuery} {countQuery}",
@@ -51,7 +51,7 @@ public class BookingRepository(IDbConnection dbConnection) : IBookingRepository
     public async Task<bool> HasOverlappingBookingAsync(Guid apartmentId, DateTime startDate, DateTime endDate, CancellationToken ct = default)
     {
         return await dbConnection.ExecuteScalarAsync<bool>(
-            "SELECT COUNT(1) FROM Bookings WHERE ApartmentId = @ApartmentId AND StartDate < @EndDate AND EndDate > @StartDate",
+            "SELECT COUNT(1) FROM \"Bookings\" WHERE \"ApartmentId\" = @ApartmentId AND \"StartDate\" < @EndDate AND \"EndDate\" > @StartDate",
             new { ApartmentId = apartmentId, StartDate = startDate, EndDate = endDate },
             commandType: CommandType.StoredProcedure);
     }
@@ -59,7 +59,7 @@ public class BookingRepository(IDbConnection dbConnection) : IBookingRepository
     public async Task CreateAsync(Booking booking, CancellationToken ct = default)
     {
         await dbConnection.ExecuteAsync(
-            "INSERT INTO Bookings (Id, ApartmentId, ClientId, StartDate, EndDate, TotalPrice) VALUES (@Id, @ApartmentId, @ClientId, @StartDate, @EndDate, @TotalPrice)",
+            "INSERT INTO \"Bookings\" (\"Id\", \"ApartmentId\", \"ClientId\", \"StartDate\", \"EndDate\", \"TotalPrice\") VALUES (@Id, @ApartmentId, @ClientId, @StartDate, @EndDate, @TotalPrice)",
             new
             {
                 booking.Id,

@@ -52,7 +52,7 @@ if (app.Environment.IsDevelopment())
 
     using var scope = app.Services.CreateScope();
     var seeder = scope.ServiceProvider.GetRequiredService<IInitialDbSeeder>();
-    await seeder.MigrateAndSeedAsync();
+    await seeder.SeedRolesAsync();
 }
 
 app.UseHttpsRedirection();
