@@ -1,6 +1,8 @@
 using Application;
 using Infrastructure;
+using Infrastructure.Data;
 using Infrastructure.Persistance.Seeders.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +43,28 @@ builder.Services.AddApplication()
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var dbContext = services.GetRequiredService<AppDbContext>();
+    for (int i = 0; i < 5; i++)
+    {
+        try
+        {
+            await dbContext.Database.MigrateAsync();
+            break;
+        }
+        catch
+        {
+            await Task.Delay(2000);
+        }
+    }
+
+    var seeder = services.GetRequiredService<IInitialDbSeeder>();
+    await seeder.SeedRolesAsync();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -49,10 +73,6 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "Booking API v1");
         options.RoutePrefix = string.Empty;
     });
-
-    using var scope = app.Services.CreateScope();
-    var seeder = scope.ServiceProvider.GetRequiredService<IInitialDbSeeder>();
-    await seeder.SeedRolesAsync();
 }
 
 app.UseHttpsRedirection();
