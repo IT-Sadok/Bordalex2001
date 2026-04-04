@@ -65,7 +65,7 @@ jobs:
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        POSTGRES_PORT: ${{ variables.POSTGRES_PORT }}
+        POSTGRES_PORT: ${{ env.POSTGRES_PORT }}
 
         ASPNETCORE_ENVIRONMENT: Development
         API_HTTP_PORT: 8080
@@ -73,8 +73,8 @@ jobs:
         JWT_KEY: ${{ secrets.JWT_KEY }}
         JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
         JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
-        JWT_EXPIRY: ${{ variables.JWT_EXPIRY }}
-
+        JWT_EXPIRY: ${{ env.JWT_EXPIRY }}
+        
     # -----------------------------
     # Wait for API
     # -----------------------------
