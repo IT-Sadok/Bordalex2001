@@ -11,11 +11,6 @@ on:
       - dev
       - main
 
-env:
-  DOTNET_VERSION: "9.x"
-  SOLUTION_PATH: "BookingSystemApi/BookingSystemApi.sln"
-  DOCKER_COMPOSE_PATH: "BookingSystemApi/docker-compose.dcproj"
-
 jobs:
 
   build:
@@ -33,28 +28,28 @@ jobs:
     - name: Setup .NET 9
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+        dotnet-version: ${{ vars.DOTNET_VERSION }}
 
     - name: Remove docker-compose.dcproj
-      run: dotnet sln ${{ env.SOLUTION_PATH }} remove ${{ env.DOCKER_COMPOSE_PATH }}
+      run: dotnet sln ${{ vars.SOLUTION_PATH }} remove ${{ vars.DOCKER_COMPOSE_PATH }}
 
     - name: Restore dependencies
-      run: dotnet restore ${{ env.SOLUTION_PATH }}
+      run: dotnet restore ${{ vars.SOLUTION_PATH }}
 
     - name: Build solution
-      run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
+      run: dotnet build ${{ vars.SOLUTION_PATH }} --configuration Release --no-restore
 
     - name: Run tests
-      run: dotnet test ${{ env.SOLUTION_PATH }} --configuration Release --no-build --verbosity normal
+      run: dotnet test ${{ vars.SOLUTION_PATH }} --configuration Release --no-build --verbosity normal
 
     # -----------------------------
     # Check vulnerable packages and formatting
     # -----------------------------
     - name: Check vulnerable packages
-      run: dotnet list ${{ env.SOLUTION_PATH }} package --vulnerable
+      run: dotnet list ${{ vars.SOLUTION_PATH }} package --vulnerable
 
     - name: Check formatting
-      run: dotnet format ${{ env.SOLUTION_PATH }}
+      run: dotnet format ${{ vars.SOLUTION_PATH }}
 
     # -----------------------------
     # Start Docker Compose services
@@ -65,15 +60,15 @@ jobs:
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        POSTGRES_PORT: ${{ env.POSTGRES_PORT }}
+        POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
 
-        ASPNETCORE_ENVIRONMENT: Development
-        API_HTTP_PORT: 8080
+        ASPNETCORE_ENVIRONMENT: ${{ vars.ASPNETCORE_ENVIRONMENT }}
+        API_HTTP_PORT: ${{ vars.API_HTTP_PORT }}
 
         JWT_KEY: ${{ secrets.JWT_KEY }}
         JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
         JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
-        JWT_EXPIRY: ${{ env.JWT_EXPIRY }}
+        JWT_EXPIRY: ${{ vars.JWT_EXPIRY }}
         
     # -----------------------------
     # Wait for API
@@ -81,7 +76,7 @@ jobs:
     - name: Wait for API to be healthy
       run: |
         for i in {1..15}; do
-          if curl -f http://localhost:8080; then
+          if curl -f http://localhost:${{ vars.API_HTTP_PORT }}; then
             echo "API is up"
             exit 0
           fi
@@ -96,7 +91,7 @@ jobs:
     # Smoke API test
     # -----------------------------
     - name: Test Swagger endpoint
-      run: curl -f http://localhost:8080/swagger || (echo "Swagger endpoint is not reachable" && exit 1)
+      run: curl -f http://localhost:${{ vars.API_HTTP_PORT }}/swagger || (echo "Swagger endpoint is not reachable" && exit 1)
 
     # -----------------------------
     # Logs if failed
