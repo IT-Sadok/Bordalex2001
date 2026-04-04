@@ -13,10 +13,8 @@ on:
 
 env:
   DOTNET_VERSION: "9.x"
-  NUGET_PACKAGES_DIR: "~/.nuget/packages"
   SOLUTION_PATH: "BookingSystemApi/BookingSystemApi.sln"
-  API_PROJECT_PATH: "BookingSystemApi/WebApi/WebApi.csproj"
-  PUBLISH_DIR: "./publish"
+  DOCKER_COMPOSE_PATH: "BookingSystemApi/docker-compose.dcproj"
 
 jobs:
 
@@ -29,24 +27,16 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    # -----------------------------
+    # Setup .NET 9 and build/test solution
+    # -----------------------------
     - name: Setup .NET 9
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Cache NuGet packages
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.NUGET_PACKAGES_DIR }}
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget
-
-    - name: Check vulnerable packages
-      run: dotnet list ${{ env.SOLUTION_PATH }} package --vulnerable
-
-    - name: Check formatting
-      run: dotnet format ${{ env.SOLUTION_PATH }}
+    - name: Remove docker-compose.dcproj
+      run: dotnet sln ${{ env.SOLUTION_PATH }} remove ${{ env.DOCKER_COMPOSE_PATH }}
 
     - name: Restore dependencies
       run: dotnet restore ${{ env.SOLUTION_PATH }}
@@ -57,11 +47,67 @@ jobs:
     - name: Run tests
       run: dotnet test ${{ env.SOLUTION_PATH }} --configuration Release --no-build --verbosity normal
 
-    - name: Publish API
-      run: dotnet publish ${{ env.API_PROJECT_PATH }} -c Release -o ${{ env.PUBLISH_DIR }}
+    # -----------------------------
+    # Check vulnerable packages and formatting
+    # -----------------------------
+    - name: Check vulnerable packages
+      run: dotnet list ${{ env.SOLUTION_PATH }} package --vulnerable
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: webapi-build
-        path: ${{ env.PUBLISH_DIR }}
+    - name: Check formatting
+      run: dotnet format ${{ env.SOLUTION_PATH }}
+
+    # -----------------------------
+    # Start Docker Compose services
+    # -----------------------------
+    - name: Start services with Docker Compose
+      run: docker compose up -d --build
+      env:
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_PORT: ${{ variables.POSTGRES_PORT }}
+
+        ASPNETCORE_ENVIRONMENT: Development
+        API_HTTP_PORT: 8080
+
+        JWT_KEY: ${{ secrets.JWT_KEY }}
+        JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+        JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
+        JWT_EXPIRY: ${{ variables.JWT_EXPIRY }}
+
+    # -----------------------------
+    # Wait for API
+    # -----------------------------
+    - name: Wait for API to be healthy
+      run: |
+        for i in {1..15}; do
+          if curl -f http://localhost:8080; then
+            echo "API is up"
+            exit 0
+          fi
+          echo "Waiting for API..."
+          sleep 5
+        done
+        echo "API failed to start"
+        docker compose logs
+        exit 1
+
+    # -----------------------------
+    # Smoke API test
+    # -----------------------------
+    - name: Test Swagger endpoint
+      run: curl -f http://localhost:8080/swagger || (echo "Swagger endpoint is not reachable" && exit 1)
+
+    # -----------------------------
+    # Logs if failed
+    # -----------------------------
+    - name: Show Docker Compose logs if API failed
+      if: failure()
+      run: docker compose logs
+
+    # -----------------------------
+    # Stop Docker Compose services
+    # -----------------------------
+    - name: Stop services
+      if: always()
+      run: docker compose down -v
