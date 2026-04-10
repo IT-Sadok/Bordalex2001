@@ -11,13 +11,6 @@ on:
       - dev
       - main
 
-env:
-  DOTNET_VERSION: "9.x"
-  NUGET_PACKAGES_DIR: "~/.nuget/packages"
-  SOLUTION_PATH: "BookingSystemApi/BookingSystemApi.sln"
-  API_PROJECT_PATH: "BookingSystemApi/WebApi/WebApi.csproj"
-  PUBLISH_DIR: "./publish"
-
 jobs:
 
   build:
@@ -37,19 +30,22 @@ jobs:
     - name: Cache NuGet packages
       uses: actions/cache@v4
       with:
-        path: ${{ env.NUGET_PACKAGES_DIR }}
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        path: ${{ vars.NUGET_PACKAGES_DIR }}
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/${{ vars.CSPROJ_FILES }}') }}
         restore-keys: |
           ${{ runner.os }}-nuget
 
     - name: Check vulnerable packages
-      run: dotnet list ${{ env.SOLUTION_PATH }} package --vulnerable
-
-    - name: Check formatting
-      run: dotnet format ${{ env.SOLUTION_PATH }}
+      run: |
+        for proj in $(find . -name '${{ vars.CSPROJ_FILES }}'); 
+          do dotnet list $proj package --vulnerable; 
+        done
 
     - name: Restore dependencies
-      run: dotnet restore ${{ vars.SOLUTION_PATH }}
+      run: |
+        for proj in $(find . -name '${{ vars.CSPROJ_FILES }}');
+          do dotnet restore $proj; 
+        done
 
     - name: Build solution
       run: dotnet build ${{ vars.SOLUTION_PATH }} --configuration Release --no-restore
@@ -58,10 +54,10 @@ jobs:
       run: dotnet test ${{ vars.SOLUTION_PATH }} --configuration Release --no-build --verbosity normal
 
     - name: Publish API
-      run: dotnet publish ${{ env.API_PROJECT_PATH }} -c Release -o ${{ env.PUBLISH_DIR }}
+      run: dotnet publish ${{ vars.API_PROJECT_PATH }} -c Release -o ${{ vars.PUBLISH_DIR }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: webapi-build
-        path: ${{ env.PUBLISH_DIR }}
+        path: ${{ vars.PUBLISH_DIR }}
