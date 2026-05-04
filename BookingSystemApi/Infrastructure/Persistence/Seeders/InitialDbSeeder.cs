@@ -1,13 +1,13 @@
 ﻿using Dapper;
 using Infrastructure.Consts;
 using Infrastructure.Identity;
-using Infrastructure.Persistance.Seeders.Interfaces;
+using Infrastructure.Persistence.Seeders.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
 
-namespace Infrastructure.Persistance.Seeders;
+namespace Infrastructure.Persistence.Seeders;
 
 public class InitialDbSeeder(IDbConnection dbConnection, ILogger<InitialDbSeeder> logger) : IInitialDbSeeder
 {

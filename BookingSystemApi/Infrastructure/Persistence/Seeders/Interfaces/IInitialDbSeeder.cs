@@ -1,8 +1,4 @@
-﻿using Infrastructure.Data;
-using Microsoft.AspNetCore.Identity;
-using System.Data;
-
-namespace Infrastructure.Persistance.Seeders.Interfaces;
+﻿namespace Infrastructure.Persistence.Seeders.Interfaces;
 
 public interface IInitialDbSeeder
 {

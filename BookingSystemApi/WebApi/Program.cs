@@ -1,7 +1,7 @@
 using Application;
 using Infrastructure;
 using Infrastructure.Data;
-using Infrastructure.Persistance.Seeders.Interfaces;
+using Infrastructure.Persistence.Seeders.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
