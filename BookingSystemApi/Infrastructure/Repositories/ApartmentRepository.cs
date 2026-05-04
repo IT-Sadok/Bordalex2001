@@ -13,16 +13,16 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
     {
         return await dbConnection.QueryFirstOrDefaultAsync<Apartment>(
             "SELECT * FROM \"Apartments\" WHERE \"Id\" = @Id",
-            new { Id = id },
-            commandType: CommandType.StoredProcedure);
+            new { Id = id }
+        );
     }
 
     public async Task<IEnumerable<Apartment>> GetAvailableAsync(DateTime startDate, DateTime endDate, CancellationToken ct = default)
     {
         return await dbConnection.QueryAsync<Apartment>(
             "SELECT * FROM \"Apartments\" WHERE \"IsAvailable\" = 1 AND \"Id\" NOT IN (SELECT \"ApartmentId\" FROM \"Bookings\" WHERE \"StartDate\" < @EndDate AND \"EndDate\" > @StartDate)",
-            new { StartDate = startDate, EndDate = endDate },
-            commandType: CommandType.StoredProcedure);
+            new { StartDate = startDate, EndDate = endDate }
+        );
     }
 
     public async Task<(IEnumerable<Apartment>, int)> GetPagedAsync(

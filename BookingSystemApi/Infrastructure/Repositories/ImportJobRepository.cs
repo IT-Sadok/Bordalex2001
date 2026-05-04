@@ -21,8 +21,7 @@ public class ImportJobRepository(IDbConnection dbConnection) : IImportJobReposit
                 job.TotalRecords,
                 job.ProcessedRecords,
                 job.CreatedAt
-            },
-            commandType: CommandType.StoredProcedure
+            }
         );
     }
 
@@ -30,8 +29,7 @@ public class ImportJobRepository(IDbConnection dbConnection) : IImportJobReposit
     {
         return await dbConnection.QueryFirstOrDefaultAsync<ImportJob>(
             "SELECT * FROM \"ImportJobs\" WHERE \"Id\" = @Id",
-            new { Id = id },
-            commandType: CommandType.StoredProcedure
+            new { Id = id }
         );
     }
 
@@ -39,8 +37,7 @@ public class ImportJobRepository(IDbConnection dbConnection) : IImportJobReposit
     {
         return [..await dbConnection.QueryAsync<ImportJob>(
             "SELECT * FROM \"ImportJobs\" WHERE \"Status\" = @Status",
-            new { Status = ImportStatus.Pending },
-            commandType: CommandType.StoredProcedure
+            new { Status = ImportStatus.Pending }
         )];
     }
 
@@ -48,8 +45,7 @@ public class ImportJobRepository(IDbConnection dbConnection) : IImportJobReposit
     {
         var job = await dbConnection.QueryFirstOrDefaultAsync<ImportJob>(
             "SELECT * FROM \"ImportJobs\" WHERE \"Id\" = @Id",
-            new { Id = id },
-            commandType: CommandType.StoredProcedure
+            new { Id = id }
         ) ?? throw new InvalidOperationException($"Import job with ID {id} not found.");
 
         job.Status = ImportStatus.InProgress;
@@ -62,8 +58,7 @@ public class ImportJobRepository(IDbConnection dbConnection) : IImportJobReposit
                 job.Status,
                 job.StartedAt,
                 job.Id
-            },
-            commandType: CommandType.StoredProcedure
+            }
         );
     }
 
@@ -71,8 +66,7 @@ public class ImportJobRepository(IDbConnection dbConnection) : IImportJobReposit
     {
         var job = await dbConnection.QueryFirstOrDefaultAsync<ImportJob>(
             "SELECT * FROM \"ImportJobs\" WHERE \"Id\" = @Id",
-            new { Id = id },
-            commandType: CommandType.StoredProcedure
+            new { Id = id }
         ) ?? throw new InvalidOperationException($"Import job with ID {id} not found.");
 
         job.Status = ImportStatus.Completed;
@@ -85,8 +79,7 @@ public class ImportJobRepository(IDbConnection dbConnection) : IImportJobReposit
                 job.Status,
                 job.CompletedAt,
                 job.Id
-            },
-            commandType: CommandType.StoredProcedure
+            }
         );
     }
 
@@ -108,8 +101,7 @@ public class ImportJobRepository(IDbConnection dbConnection) : IImportJobReposit
                 job.Status,
                 job.ErrorMessage,
                 job.Id
-            },
-            commandType: CommandType.StoredProcedure
+            }
         );
     }
 
@@ -117,8 +109,7 @@ public class ImportJobRepository(IDbConnection dbConnection) : IImportJobReposit
     {
         var job = await dbConnection.QueryFirstOrDefaultAsync<ImportJob>(
             "SELECT * FROM \"ImportJobs\" WHERE \"Id\" = @Id",
-            new { Id = id },
-            commandType: CommandType.StoredProcedure
+            new { Id = id }
         ) ?? throw new InvalidOperationException($"Import job with ID {id} not found.");
 
         job.ProcessedRecords += count;
@@ -129,8 +120,7 @@ public class ImportJobRepository(IDbConnection dbConnection) : IImportJobReposit
             {
                 job.ProcessedRecords,
                 job.Id
-            },
-            commandType: CommandType.StoredProcedure
+            }
         );
     }
 }

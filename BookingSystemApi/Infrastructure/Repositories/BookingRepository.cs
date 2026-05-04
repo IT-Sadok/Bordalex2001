@@ -52,8 +52,8 @@ public class BookingRepository(IDbConnection dbConnection) : IBookingRepository
     {
         return await dbConnection.ExecuteScalarAsync<bool>(
             "SELECT COUNT(1) FROM \"Bookings\" WHERE \"ApartmentId\" = @ApartmentId AND \"StartDate\" < @EndDate AND \"EndDate\" > @StartDate",
-            new { ApartmentId = apartmentId, StartDate = startDate, EndDate = endDate },
-            commandType: CommandType.StoredProcedure);
+            new { ApartmentId = apartmentId, StartDate = startDate, EndDate = endDate }
+        );
     }
 
     public async Task CreateAsync(Booking booking, CancellationToken ct = default)
@@ -68,7 +68,7 @@ public class BookingRepository(IDbConnection dbConnection) : IBookingRepository
                 booking.StartDate,
                 booking.EndDate,
                 booking.TotalPrice
-            },
-            commandType: CommandType.StoredProcedure);
+            }
+        );
     }
 }
