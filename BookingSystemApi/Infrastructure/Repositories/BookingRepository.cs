@@ -50,10 +50,18 @@ public class BookingRepository(IDbConnection dbConnection) : IBookingRepository
 
     public async Task<bool> HasOverlappingBookingAsync(Guid apartmentId, DateTime startDate, DateTime endDate, CancellationToken ct = default)
     {
-        return await dbConnection.ExecuteScalarAsync<bool>(
-            "SELECT COUNT(1) FROM \"Bookings\" WHERE \"ApartmentId\" = @ApartmentId AND \"StartDate\" < @EndDate AND \"EndDate\" > @StartDate",
-            new { ApartmentId = apartmentId, StartDate = startDate, EndDate = endDate }
+        var count = await dbConnection.ExecuteScalarAsync<int>(
+            "SELECT COUNT(*) FROM \"Bookings\" WHERE \"ApartmentId\" = @ApartmentId AND \"StartDate\" < @EndDate AND \"EndDate\" > @StartDate",
+            new
+            {
+                ApartmentId = apartmentId,
+                StartDate = startDate,
+                EndDate = endDate
+            }
         );
+        
+        var hasAny = count > 0;
+        return hasAny;
     }
 
     public async Task CreateAsync(Booking booking, CancellationToken ct = default)
