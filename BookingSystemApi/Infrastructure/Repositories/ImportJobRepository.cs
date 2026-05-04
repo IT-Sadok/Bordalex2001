@@ -35,10 +35,11 @@ public class ImportJobRepository(IDbConnection dbConnection) : IImportJobReposit
 
     public async Task<IReadOnlyList<ImportJob>> GetPendingAsync(CancellationToken ct = default)
     {
-        return [..await dbConnection.QueryAsync<ImportJob>(
+        var jobs = (await dbConnection.QueryAsync<ImportJob>(
             "SELECT * FROM \"ImportJobs\" WHERE \"Status\" = @Status",
             new { Status = ImportStatus.Pending }
-        )];
+        )).ToList();
+        return jobs;
     }
 
     public async Task MarkInProgressAsync(Guid id, CancellationToken ct = default)
