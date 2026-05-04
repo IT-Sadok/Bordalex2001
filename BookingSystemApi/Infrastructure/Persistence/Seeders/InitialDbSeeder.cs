@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
-using System.Diagnostics;
 
 namespace Infrastructure.Persistance.Seeders;
 
@@ -23,11 +22,11 @@ public class InitialDbSeeder(IDbConnection dbConnection, ILogger<InitialDbSeeder
 
         foreach (var role in roles)
         {
-            var roleExists = await dbConnection.ExecuteScalarAsync<bool>(
+            var count = await dbConnection.ExecuteScalarAsync<int>(
                 "SELECT COUNT(1) FROM \"AspNetRoles\" WHERE \"Name\" = @RoleName",
                 new { RoleName = role });
 
-            if (!roleExists)
+            if (count == 0)
             {
                 var result = await dbConnection.ExecuteAsync(
                     "INSERT INTO \"AspNetRoles\" (\"Id\", \"Name\", \"NormalizedName\") VALUES (@Id, @Name, @NormalizedName)",
@@ -66,13 +65,14 @@ public class InitialDbSeeder(IDbConnection dbConnection, ILogger<InitialDbSeeder
                     NormalizedEmail = "ADMIN@LOCAL",
                     NormalizedUserName = "ADMIN@LOCAL",
                     EmailConfirmed = true,
-                    PasswordHash = passwordHasher.HashPassword(null, "Admin123!"),
                     PhoneNumberConfirmed = false,
                     TwoFactorEnabled = false,
                     LockoutEnabled = false,
                     AccessFailedCount = 0,
                     MustChangePassword = false
                 };
+
+                user.PasswordHash = passwordHasher.HashPassword(user, "Admin123!");
 
                 var result = await dbConnection.ExecuteAsync(
                     "INSERT INTO \"AspNetUsers\" (\"Id\", \"UserName\", \"NormalizedUserName\", \"Email\", \"NormalizedEmail\", \"EmailConfirmed\", \"PasswordHash\", \"PhoneNumberConfirmed\", \"TwoFactorEnabled\", \"LockoutEnabled\", \"AccessFailedCount\", \"MustChangePassword\", \"DisplayName\") VALUES (@Id, @UserName, @NormalizedUserName, @Email, @NormalizedEmail, @EmailConfirmed, @PasswordHash, @PhoneNumberConfirmed, @TwoFactorEnabled, @LockoutEnabled, @AccessFailedCount, @MustChangePassword, @DisplayName)",
