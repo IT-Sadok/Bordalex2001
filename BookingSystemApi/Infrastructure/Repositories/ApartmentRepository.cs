@@ -12,17 +12,17 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
     public async Task<Apartment?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         return await dbConnection.QueryFirstOrDefaultAsync<Apartment>(
-            "SELECT * FROM Apartments WHERE Id = @Id",
-            new { Id = id },
-            commandType: CommandType.StoredProcedure);
+            "SELECT * FROM \"Apartments\" WHERE \"Id\" = @Id",
+            new { Id = id }
+        );
     }
 
     public async Task<IEnumerable<Apartment>> GetAvailableAsync(DateTime startDate, DateTime endDate, CancellationToken ct = default)
     {
         return await dbConnection.QueryAsync<Apartment>(
-            "SELECT * FROM Apartments WHERE IsAvailable = 1 AND Id NOT IN (SELECT ApartmentId FROM Bookings WHERE StartDate < @EndDate AND EndDate > @StartDate)",
-            new { StartDate = startDate, EndDate = endDate },
-            commandType: CommandType.StoredProcedure);
+            "SELECT * FROM \"Apartments\" WHERE \"IsAvailable\" = 1 AND \"Id\" NOT IN (SELECT \"ApartmentId\" FROM \"Bookings\" WHERE \"StartDate\" < @EndDate AND \"EndDate\" > @StartDate)",
+            new { StartDate = startDate, EndDate = endDate }
+        );
     }
 
     public async Task<(IEnumerable<Apartment>, int)> GetPagedAsync(
@@ -44,10 +44,10 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
             ApartmentSortBy.Address => "Address",
             _ => "CreatedAt"
         };
-        var query = $@"SELECT * FROM Apartments 
+        var query = $@"SELECT * FROM ""Apartments"" 
                        ORDER BY {sortColumn} {sortOrder} 
                        OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-                       SELECT COUNT(*) FROM Apartments;";
+                       SELECT COUNT(*) FROM ""Apartments"";";
 
         using var multiple = await dbConnection.QueryMultipleAsync(query, new
         {

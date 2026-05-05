@@ -1,70 +1,105 @@
 ﻿using Dapper;
-using Infrastructure.Data;
-using Infrastructure.Persistance.Seeders.Interfaces;
+using Infrastructure.Consts;
+using Infrastructure.Identity;
+using Infrastructure.Persistence.Seeders.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Data;
 
-namespace Infrastructure.Persistance.Seeders;
+namespace Infrastructure.Persistence.Seeders;
 
-public class InitialDbSeeder(AppDbContext dbContext, RoleManager<IdentityRole> roleManager, IDbConnection dbConnection) : IInitialDbSeeder
+public class InitialDbSeeder(IDbConnection dbConnection, ILogger<InitialDbSeeder> logger) : IInitialDbSeeder
 {
-    public async Task MigrateAndSeedAsync(CancellationToken ct = default)
+    public async Task SeedRolesAsync(CancellationToken ct = default)
     {
-#if DEBUG
-        await dbContext.Database.MigrateAsync(ct);
-#endif
-
-        foreach (var role in roleManager.Roles)
+        var roles = new[]
         {
-            if (!await roleManager.RoleExistsAsync(role.Name))
+            Roles.Admin,
+            Roles.Host,
+            Roles.Client
+        };
+
+        foreach (var role in roles)
+        {
+            var count = await dbConnection.ExecuteScalarAsync<int>(
+                "SELECT COUNT(1) FROM \"AspNetRoles\" WHERE \"Name\" = @RoleName",
+                new { RoleName = role });
+
+            if (count == 0)
             {
-                await roleManager.CreateAsync(new IdentityRole(role.Name));
+                var result = await dbConnection.ExecuteAsync(
+                    "INSERT INTO \"AspNetRoles\" (\"Id\", \"Name\", \"NormalizedName\") VALUES (@Id, @Name, @NormalizedName)",
+                    new
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = role,
+                        NormalizedName = role.ToUpper()
+                    });
+
+                if (!result.Equals(1))
+                {
+                    logger.LogError("Failed to seed role: {Role}", role);
+                }
+                else
+                {
+                    logger.LogInformation("Seeded role: {Role}", role);
+                }
             }
         }
 
-        var apartmentsCountQuery = "SELECT COUNT(1) FROM Apartments";
-        var apartmentsCount = await dbConnection.QueryAsync<int>(apartmentsCountQuery);
 
-        if (apartmentsCount.First() == 0)
+        if (await dbConnection.QueryFirstOrDefaultAsync<string>(
+            "SELECT \"Id\" FROM \"AspNetUsers\" WHERE \"Email\" = @Email",
+            new { Email = "admin@local" }) == null)
         {
-            var insertApartmentsSql = 
-                @"
-                INSERT INTO Apartments (HostId, Title, Description, Address, PricePerNight, IsAvailable)
-                VALUES (@HostId, @Title, @Description, @Address, @PricePerNight, @IsAvailable);";
-
-            var apartments = new[] 
             {
-                new { HostId = Guid.NewGuid(), Title = "Cozy Downtown Apartment", Description = "A cozy apartment in the heart of the city.", Address = "123 Main St, Cityville", PricePerNight = 75.00m, IsAvailable = true },
-                new { HostId = Guid.NewGuid(), Title = "Beachside Bungalow", Description = "A beautiful bungalow by the beach.", Address = "456 Ocean Ave, Beachtown", PricePerNight = 120.00m, IsAvailable = true },
-                new { HostId = Guid.NewGuid(), Title = "Mountain Cabin Retreat", Description = "A peaceful cabin in the mountains.", Address = "789 Pine Rd, Mountaintown", PricePerNight = 90.00m, IsAvailable = true },
-                new { HostId = Guid.NewGuid(), Title = "Luxury City Loft", Description = "A luxurious loft in the city center.", Address = "101 Center St, Metropolis", PricePerNight = 200.00m, IsAvailable = true },
-                new { HostId = Guid.NewGuid(), Title = "Suburban Family Home", Description = "A spacious home perfect for families.", Address = "202 Maple Dr, Suburbia", PricePerNight = 110.00m, IsAvailable = true }
-            };
+                var passwordHasher = new PasswordHasher<AppUser>();
 
-            await dbConnection.ExecuteAsync(insertApartmentsSql, apartments);
-        }
+                var user = new AppUser
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserName = "admin@local",
+                    DisplayName = "admin",
+                    Email = "admin@local",
+                    NormalizedEmail = "ADMIN@LOCAL",
+                    NormalizedUserName = "ADMIN@LOCAL",
+                    EmailConfirmed = true,
+                    PhoneNumberConfirmed = false,
+                    TwoFactorEnabled = false,
+                    LockoutEnabled = false,
+                    AccessFailedCount = 0,
+                    MustChangePassword = false
+                };
 
-        var bookingsCountQuery = "SELECT COUNT(1) FROM Bookings";
-        var bookingsCount = await dbConnection.QueryAsync<int>(bookingsCountQuery);
+                user.PasswordHash = passwordHasher.HashPassword(user, "Admin123!");
 
-        if (bookingsCount.First() == 0)
-        {
-            var insertBookingsSql = 
-                @"
-                INSERT INTO Bookings (ApartmentId, ClientId, StartDate, EndDate, TotalPrice)
-                VALUES (@ApartmentId, @ClientId, @StartDate, @EndDate, @TotalPrice);";
+                var result = await dbConnection.ExecuteAsync(
+                    "INSERT INTO \"AspNetUsers\" (\"Id\", \"UserName\", \"NormalizedUserName\", \"Email\", \"NormalizedEmail\", \"EmailConfirmed\", \"PasswordHash\", \"PhoneNumberConfirmed\", \"TwoFactorEnabled\", \"LockoutEnabled\", \"AccessFailedCount\", \"MustChangePassword\", \"DisplayName\") VALUES (@Id, @UserName, @NormalizedUserName, @Email, @NormalizedEmail, @EmailConfirmed, @PasswordHash, @PhoneNumberConfirmed, @TwoFactorEnabled, @LockoutEnabled, @AccessFailedCount, @MustChangePassword, @DisplayName)",
+                    user);
 
-            var bookings = new[] 
-            {
-                new { ApartmentId = Guid.NewGuid(), ClientId = Guid.NewGuid(), StartDate = DateTime.UtcNow.AddDays(10), EndDate = DateTime.UtcNow.AddDays(15), TotalPrice = 375.00m },
-                new { ApartmentId = Guid.NewGuid(), ClientId = Guid.NewGuid(), StartDate = DateTime.UtcNow.AddDays(20), EndDate = DateTime.UtcNow.AddDays(25), TotalPrice = 600.00m },
-                new { ApartmentId = Guid.NewGuid(), ClientId = Guid.NewGuid(), StartDate = DateTime.UtcNow.AddDays(30), EndDate = DateTime.UtcNow.AddDays(35), TotalPrice = 450.00m },
-                new { ApartmentId = Guid.NewGuid(), ClientId = Guid.NewGuid(), StartDate = DateTime.UtcNow.AddDays(40), EndDate = DateTime.UtcNow.AddDays(45), TotalPrice = 1000.00m },
-                new { ApartmentId = Guid.NewGuid(), ClientId = Guid.NewGuid(), StartDate = DateTime.UtcNow.AddDays(50), EndDate = DateTime.UtcNow.AddDays(55), TotalPrice = 550.00m }
-            };
+                if (!result.Equals(1))
+                {
+                    logger.LogError("Failed to seed admin user");
+                }
+                else
+                {
+                    logger.LogInformation("Seeded admin user");
+                }
 
-            await dbConnection.ExecuteAsync(insertBookingsSql, bookings);
+                var roleResult = await dbConnection.ExecuteAsync(
+                    "INSERT INTO \"AspNetUserRoles\" (\"UserId\", \"RoleId\") VALUES (@UserId, (SELECT \"Id\" FROM \"AspNetRoles\" WHERE \"Name\" = @RoleName))",
+                    new { UserId = user.Id, RoleName = Roles.Admin });
+
+                if (!roleResult.Equals(1))
+                {
+                    logger.LogError("Failed to assign Admin role to admin user");
+                }
+                else
+                {
+                    logger.LogInformation("Assigned Admin role to admin user");
+                }
+            }
         }
     }
 }
