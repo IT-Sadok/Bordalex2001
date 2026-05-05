@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+    branches:
+      - dev
+      - main
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ vars.DOTNET_VERSION }}
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ${{ vars.NUGET_PACKAGES_DIR }}
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/${{ vars.CSPROJ_FILES }}') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget
+
+    - name: Check vulnerable packages
+      run: |
+        for proj in $(find . -name '${{ vars.CSPROJ_FILES }}'); 
+          do dotnet list $proj package --vulnerable; 
+        done
+
+    - name: Restore dependencies
+      run: |
+        for proj in $(find . -name '${{ vars.CSPROJ_FILES }}');
+          do dotnet restore $proj; 
+        done
+
+    - name: Build solution
+      run: dotnet build ${{ vars.SOLUTION_PATH }} --configuration Release --no-restore
+
+    - name: Run tests
+      run: dotnet test ${{ vars.SOLUTION_PATH }} --configuration Release --no-build --verbosity normal
+
+    - name: Publish API
+      run: dotnet publish ${{ vars.API_PROJECT_PATH }} -c Release -o ${{ vars.PUBLISH_DIR }}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: webapi-build
+        path: ${{ vars.PUBLISH_DIR }}

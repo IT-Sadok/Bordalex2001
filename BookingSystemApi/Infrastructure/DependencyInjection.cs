@@ -1,13 +1,21 @@
 ﻿using Application.Common.Mediator.Interfaces;
-using Application.Interfaces;
+using Application.Features.Apartments.Interfaces;
+using Application.Features.Bookings.Interfaces;
+using Application.Features.Imports.Interfaces;
+using Application.Features.Users.Interfaces;
+using Application.Imports;
 using Infrastructure.Auth;
-using Infrastructure.Consts;
 using Infrastructure.Data;
+using Infrastructure.Features.Users.Handlers;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
-using Infrastructure.Seeders;
-using Infrastructure.Seeders.Interfaces;
-using Infrastructure.Users.Handlers;
+using Infrastructure.Imports;
+using Infrastructure.Imports.Processing;
+using Infrastructure.Imports.Services;
+using Infrastructure.Persistence.Seeders;
+using Infrastructure.Persistence.Seeders.Interfaces;
+using Infrastructure.Repositories;
+using Infrastructure.UserContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +32,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+        services.Configure<IdentityOptionsConfiguration>(configuration.GetSection("Identity"));
 
         services.AddDbContext<AppDbContext>(options =>
         {
@@ -100,7 +109,18 @@ public static class DependencyInjection
         });
 
         services.AddHttpContextAccessor();
+        services.AddScoped<IUserContext, UserContext.UserContext>();
         services.AddScoped<IInitialDbSeeder, InitialDbSeeder>();
+        services.AddScoped<IApartmentRepository, ApartmentRepository>();
+        services.AddScoped<IBookingRepository, BookingRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IImportJobRepository, ImportJobRepository>();
+        services.AddScoped<IJsonBatchReader, JsonBatchReader>();
+        services.AddScoped<IImportBatchProcessor, ImportBatchProcessor>();
+        services.AddScoped<IImportStorage, FileSystemImportStorage>();
+        services.AddScoped<IDataImportService, DataImportService>();
+
+        services.AddHostedService<ImportBackgroundService>();
 
         return services;
     }
