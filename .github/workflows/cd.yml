@@ -32,8 +32,8 @@ jobs:
           file: ${{ vars.DOCKERFILE_PATH }}
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/${{ vars.IMAGE_NAME }}:latest
+            ghcr.io/${{ github.actor }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}
+            ghcr.io/${{ github.actor }}/${{ vars.IMAGE_NAME }}:latest
 
   deploy:
     needs: build-and-push
@@ -45,4 +45,4 @@ jobs:
         with:
           app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ghcr.io/${{ github.repository_owner }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}  
+          images: ghcr.io/${{ github.actor }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}  
