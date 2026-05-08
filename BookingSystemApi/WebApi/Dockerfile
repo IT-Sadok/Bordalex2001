@@ -12,7 +12,7 @@ COPY ["BookingSystemApi/Infrastructure/Infrastructure.csproj", "BookingSystemApi
 COPY ["BookingSystemApi/Application/Application.csproj", "BookingSystemApi/Application/"]
 
 # Restore dependencies
-RUN dotnet restore "BookingSystemApi/BookingSystemApi.sln"
+RUN dotnet restore "BookingSystemApi/WebApi/WebApi.csproj"
 
 # Copy the rest of the source code
 COPY . .

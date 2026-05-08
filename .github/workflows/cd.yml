@@ -45,7 +45,7 @@ jobs:
       - name: Cache Docker layers
         uses: actions/cache@v4
         with:
-          path: ${{ vars.DOCKER_BUILDX_CACHE_DIR }}
+          path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
@@ -57,13 +57,13 @@ jobs:
           file: ${{ vars.DOCKERFILE_PATH }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=local,src=${{ vars.DOCKER_BUILDX_CACHE_DIR }}
-          cache-to: type=local,dest=${{ vars.DOCKER_BUILDX_CACHE_DIR }}-new,mode=max
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
       - name: Move cache
         run: |
-          rm -rf ${{ vars.DOCKER_BUILDX_CACHE_DIR }}
-          mv ${{ vars.DOCKER_BUILDX_CACHE_DIR }}-new ${{ vars.DOCKER_BUILDX_CACHE_DIR }}
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
   deploy:
     needs: build-and-push
