@@ -16,7 +16,6 @@ jobs:
 
     outputs:
       image: ${{ steps.meta.outputs.image }}
-      tags: ${{ steps.meta.outputs.tags }}
 
     steps:
       - name: Checkout repository
@@ -24,13 +23,8 @@ jobs:
 
       - name: Set lowercase GitHub username
         run: |
-          echo "OWNER_LC=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
-      - name: Generate tags
-        id: meta
-        run: |
-          echo "image=${{ vars.IMAGE_NAME }}" >> $GITHUB_OUTPUT
-          echo "tags=${{ vars.IMAGE_NAME }}:${{ github.sha }},${{ vars.IMAGE_NAME }}:latest" >> $GITHUB_OUTPUT
+          OWNER_LC=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')"
+          echo "IMAGE=ghcr.io/${OWNER_LC}/${{ vars.IMAGE_NAME }}" >> $GITHUB_ENV
 
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -51,14 +45,22 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build and push
+        id: docker
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ${{ vars.DOCKERFILE_PATH }}
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      - name: Export image output
+        id: meta
+        run: |
+          echo "image=${{ env.IMAGE }}" >> $GITHUB_OUTPUT
 
       - name: Move cache
         run: |
