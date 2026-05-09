@@ -23,7 +23,7 @@ jobs:
 
       - name: Set lowercase GitHub username
         run: |
-          OWNER_LC=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')"
+          OWNER_LC=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
           echo "IMAGE=ghcr.io/${OWNER_LC}/${{ vars.IMAGE_NAME }}" >> $GITHUB_ENV
 
       - name: Login to GHCR
