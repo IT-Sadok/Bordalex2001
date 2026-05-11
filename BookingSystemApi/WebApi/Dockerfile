@@ -4,18 +4,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# Copy csproj files and restore as distinct layers
-COPY ["WebApi/WebApi.csproj", "WebApi/"]
-COPY ["Application/Application.csproj", "Application/"]
-COPY ["Domain/Domain.csproj", "Domain/"]
-COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
+# Copy solution and project files
+COPY ["BookingSystemApi/BookingSystemApi.sln", "BookingSystemApi/"]
+COPY ["BookingSystemApi/WebApi/WebApi.csproj", "BookingSystemApi/WebApi/"]
+COPY ["BookingSystemApi/Domain/Domain.csproj", "BookingSystemApi/Domain/"]
+COPY ["BookingSystemApi/Infrastructure/Infrastructure.csproj", "BookingSystemApi/Infrastructure/"]
+COPY ["BookingSystemApi/Application/Application.csproj", "BookingSystemApi/Application/"]
 
-RUN dotnet restore "WebApi/WebApi.csproj"
+# Restore dependencies
+RUN dotnet restore "BookingSystemApi/WebApi/WebApi.csproj"
 
 # Copy the rest of the source code
 COPY . .
 
-WORKDIR "/src/WebApi"
+# Build & publish the application
+WORKDIR "/src/BookingSystemApi/WebApi"
 RUN dotnet publish "WebApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # -----------------------------

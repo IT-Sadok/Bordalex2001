@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: 
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,35 +14,70 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
-      - name: Log in to GitHub Container Registry
+      - name: Set lowercase GitHub username
+        run: |
+          OWNER_LC=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE=ghcr.io/${OWNER_LC}/${{ vars.IMAGE_NAME }}" >> $GITHUB_ENV
+
+      - name: Login to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ${{ vars.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build and push
+        id: docker
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ${{ vars.DOCKERFILE_PATH }}
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/${{ vars.IMAGE_NAME }}:latest
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      - name: Export image output
+        id: meta
+        run: |
+          echo "image=${{ env.IMAGE }}" >> $GITHUB_OUTPUT
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
 
+    environment:
+      name: production
+
     steps:
-      - name: Deploy container to Azure Web App
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ghcr.io/${{ github.repository_owner }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}  
+          images: ${{ needs.build-and-push.outputs.image }}:${{ github.sha }}  
