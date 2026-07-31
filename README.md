@@ -1,15 +1,13 @@
-# Bordalex2001
-
-A full-stack Booking System API with .NET backend and React frontend.
+# Booking System API
+An Airbnb clone with .NET backend.
 
 ## Overview
 
-Backend API for managing bookings and scheduling, deployed on Azure with a modern React client application.
+Backend API for managing bookings and scheduling, deployed on Azure.
 
 ## 🏗️ Tech Stack
 
 - **Backend**: .NET 9, C#
-- **Frontend**: React, TypeScript, Vite
 - **Cloud**: Azure (Poland Central)
 - **CI/CD**: GitHub Actions
 
@@ -25,18 +23,9 @@ dotnet build --configuration Release
 dotnet test --configuration Release
 ```
 
-### Frontend
-
-```bash
-cd BookingSystemClient
-npm install
-npm run dev
-```
-
 ## 📋 Features
 
-- RESTful API for booking management
-- React TypeScript frontend
+- Web API for booking management
 - Automated testing and CI/CD pipeline
 - Security vulnerability scanning
 - Azure cloud deployment
