@@ -2,20 +2,27 @@ import { useState } from "react";
 import { Link } from "react-router";
 
 function SearchBar() {
-  const [query, setQuery] = useState("");
+  //const [query, setQuery] = useState("");
 
   return (
     <>
       <form role="search" className="max-w-md mx-auto w-full h-full px-4">
-        <div className="relative flex items-center w-full h-full">
-          <input
+        <div className="relative flex items-center space-between gap-x-4 px-2 py-2 border border-gray-300 rounded-3xl hover:shadow-lg transition-all">
+          {/*<input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search..."
             className="w-full px-4 py-2.5 border border-gray-300 rounded-3xl focus:ring-2 focus:ring-blue-500 transition-all"
-          />
-          <div className="absolute right-0 flex items-center pr-2">
+          />*/}
+          <div className="flex items-center basis-11/12">
+            <div className="text-base text-center font-medium w-full">Anywhere</div>
+            <span className="border border-gray-300 h-6 mx-2"></span>
+            <div className="text-base text-center font-medium w-full">Any week</div>
+            <span className="border border-gray-300 h-6 mx-2"></span>
+            <div className="text-base text-center font-medium w-full">Add guests</div>
+          </div>
+          <div className="flex basis-1/12">
             <button
               type="button"
               className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-2xl transition-all"
