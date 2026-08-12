@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import SearchBar from "./SearchBar";
+import DropdownMenu from "./DropdownMenu/DropdownMenu";
 
 export default function Header() {
   return (
@@ -27,7 +28,6 @@ export default function Header() {
             </div>
             <div className="flex">
               <button
-                popover-target="language-and-currency-menu"
                 type="button"
                 className="bg-gray-200 py-2 px-2 rounded-2xl hover:bg-gray-300 transition-all"
               >
@@ -45,12 +45,8 @@ export default function Header() {
                 </svg>
               </button>
             </div>
-            <div className="flex">
-              <button
-                popover-target="language-and-currency-menu"
-                type="button"
-                className="bg-gray-200 py-2 px-2 rounded-2xl hover:bg-gray-300 transition-all"
-              >
+            <DropdownMenu
+              trigger={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 16 16"
@@ -63,8 +59,12 @@ export default function Header() {
                     clipRule="evenodd"
                   />
                 </svg>
-              </button>
-            </div>
+              }
+              items={[
+                { label: "Login", to: "/login" },
+                { label: "Register", to: "/register" },
+              ]}
+            />
           </div>
           {/*<div className="hidden lg:flex lg:flex-1 lg:justify-end gap-x-12">
             <Link
