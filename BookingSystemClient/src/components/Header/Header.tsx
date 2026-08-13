@@ -26,11 +26,8 @@ export default function Header() {
                 Airbnb your home
               </button>
             </div>
-            <div className="flex">
-              <button
-                type="button"
-                className="bg-gray-200 py-2 px-2 rounded-2xl hover:bg-gray-300 transition-all"
-              >
+            <DropdownMenu
+              trigger={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 16 16"
@@ -43,8 +40,13 @@ export default function Header() {
                     clipRule="evenodd"
                   />
                 </svg>
-              </button>
-            </div>
+              }
+              items={[
+                { label: "English", onClick: () => console.log("English") },
+                { label: "Українська", onClick: () => console.log ("Українська") },
+                { label: "Deutsch", onClick: () => console.log("Deutsch") }
+              ]}
+            />
             <DropdownMenu
               trigger={
                 <svg
@@ -63,6 +65,8 @@ export default function Header() {
               items={[
                 { label: "Login", to: "/login" },
                 { label: "Register", to: "/register" },
+                { label: "Airbnb your home", to: "#" },
+                { label: "Help center", to: "#" }
               ]}
             />
           </div>

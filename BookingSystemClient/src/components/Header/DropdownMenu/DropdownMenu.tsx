@@ -36,8 +36,11 @@ export default function DropdownMenu({ trigger, items }: DropdownMenuProps) {
             {items.map((item, index) => (
               <Link
                 key={index}
-                to={item.to}
-                onClick={() => setIsOpen(false)}
+                to={item.to || "#"}
+                onClick={() => {
+                  setIsOpen(false);
+                  item.onClick?.();
+                }}
                 className="block px-4 py-2 text-sm hover:bg-gray-100"
               >
                 {item.label}
