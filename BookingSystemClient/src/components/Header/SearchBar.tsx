@@ -1,18 +1,18 @@
 export default function SearchBar() {
   return (
     <>
-      <form role="search" className="max-w-md mx-auto w-full h-full px-4">
-        <div className="relative flex items-center space-between gap-x-4 px-2 py-2 border border-gray-300 rounded-3xl hover:shadow-lg transition-all">
+      <form role="search" className="min-w-sm mx-auto px-4">
+        <div className="relative flex items-center space-between gap-x-1 px-2 py-2 border border-gray-300 rounded-3xl hover:shadow-lg transition-all">
           <div className="flex items-center basis-11/12">
-            <div className="text-base text-center font-medium w-full">
+            <div className="text-base text-center font-medium ps-4 pe-4">
               Anywhere
             </div>
-            <span className="border border-gray-300 h-6 mx-2"></span>
-            <div className="text-base text-center font-medium w-full">
+            <span className="border border-gray-300 h-6"></span>
+            <div className="text-base text-center font-medium ps-4 pe-4">
               Any week
             </div>
-            <span className="border border-gray-300 h-6 mx-2"></span>
-            <div className="text-base text-center font-medium w-full">
+            <span className="border border-gray-300 h-6"></span>
+            <div className="text-base text-center font-medium ps-4 pe-4">
               Add guests
             </div>
           </div>

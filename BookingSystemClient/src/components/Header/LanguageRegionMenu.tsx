@@ -4,13 +4,13 @@ import DropdownMenu from "./DropdownMenu/DropdownMenu";
 const languages = [
   { code: "en", name: "English" },
   { code: "uk", name: "Українська" },
-  { code: "de", name: "Deutsch" },
+  { code: "de", name: "Deutsch" }
 ];
 
 const currencies = [
   { code: "USD", name: "US Dollar" },
   { code: "EUR", name: "Euro" },
-  { code: "UAH", name: "Ukrainian Hryvnia" },
+  { code: "UAH", name: "Ukrainian Hryvnia" }
 ];
 
 export default function LanguageRegionMenu() {

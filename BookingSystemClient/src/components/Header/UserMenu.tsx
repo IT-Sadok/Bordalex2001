@@ -22,7 +22,7 @@ export default function UserMenu() {
           { label: "Login", to: "/login" },
           { label: "Register", to: "/register" },
           { label: "Become a host", to: "#" },
-          { label: "Help center", to: "#" },
+          { label: "Help center", to: "#" }
         ]}
       />
     </>
