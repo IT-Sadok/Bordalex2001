@@ -1,22 +1,37 @@
 export default function SearchBar() {
   return (
     <>
-      <form role="search" className="min-w-sm mx-auto px-4">
-        <div className="relative flex items-center space-between gap-x-1 px-2 py-2 border border-gray-300 rounded-3xl hover:shadow-lg transition-all">
-          <div className="flex items-center basis-11/12">
-            <div className="text-base text-center font-medium ps-4 pe-4">
+      <form role="search" className="mx-auto w-full max-w-xl">
+        <div className="flex w-full items-center gap-1 px-2 py-2 border border-gray-300 rounded-3xl hover:shadow-lg transition-all">
+          {/* Search options */}
+          <div className="flex min-w-0 flex-1 items-center">
+            <button
+              type="button"
+              className="min-w-0 flex-1 truncate px-2 py-2 text-center text-sm font-medium sm:px-3 sm:text-base hover:bg-gray-100 rounded-2xl"
+            >
               Anywhere
-            </div>
-            <span className="border border-gray-300 h-6"></span>
-            <div className="text-base text-center font-medium ps-4 pe-4">
+            </button>
+            <span className="border-l border-gray-300 h-6" />
+            <button
+              type="button"
+              className="min-w-0 flex-1 truncate px-2 py-2 text-center text-sm font-medium sm:px-3 sm:text-base hover:bg-gray-100 rounded-2xl"
+            >
               Any week
-            </div>
-            <span className="border border-gray-300 h-6"></span>
-            <div className="text-base text-center font-medium ps-4 pe-4">
+            </button>
+            <span className="border-l border-gray-300 h-6" />
+            <button
+              type="button"
+              className="min-w-0 flex-1 truncate px-2 py-2 text-center text-sm font-medium sm:px-3 sm:text-base hover:bg-gray-100 rounded-2xl"
+            >
               Add guests
-            </div>
+            </button>
           </div>
-          <div className="flex bg-red-500 hover:bg-red-600 py-2 px-2 rounded-2xl transition-all">
+
+          {/* Search button*/}
+          <button
+            type="submit"
+            className="flex shrink-0 items-center justify-center bg-red-500 hover:bg-red-600 p-2 rounded-2xl transition-all" aria-label="Search"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -29,7 +44,7 @@ export default function SearchBar() {
                 clipRule="evenodd"
               />
             </svg>
-          </div>
+          </button>
         </div>
       </form>
     </>
