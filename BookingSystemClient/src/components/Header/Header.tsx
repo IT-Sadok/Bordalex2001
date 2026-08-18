@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import SearchBar from "./SearchBar";
+import SearchBar from "./SearchBar/SearchBar";
 import LanguageRegionMenu from "./LanguageRegionMenu";
 import UserMenu from "./UserMenu";
 
