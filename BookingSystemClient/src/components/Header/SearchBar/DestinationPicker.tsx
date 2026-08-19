@@ -1,7 +1,10 @@
 import { useState } from "react";
 
+const destinations = ["Kyiv", "Odesa", "Lviv", "Dnipro", "Kharkiv"];
+
 export default function DestinationPicker() {
   const [isOpen, setIsOpen] = useState(false);
+  const [destination, setDestination] = useState("");
 
   return (
     <>
@@ -12,7 +15,9 @@ export default function DestinationPicker() {
           className="w-full rounded-2xl px-3 py-2 text-left hover:bg-gray-100"
         >
           <span className="block text-xs font-semibold">Where</span>
-          <span className="block truncate text-sm text-gray-500">Anywhere</span>
+          <span className="block truncate text-sm text-gray-500">
+            {destination || "Anywhere"}
+          </span>
         </button>
 
         {isOpen && (
@@ -26,36 +31,19 @@ export default function DestinationPicker() {
             />
 
             <div className="mt-3">
-              <button
-                type="button"
-                className="w-full rounded-xl px-3 py-2 text-left hover:bg-gray-100"
-              >
-                Kyiv
-              </button>
-              <button
-                type="button"
-                className="w-full rounded-xl px-3 py-2 text-left hover:bg-gray-100"
-              >
-                Odesa
-              </button>
-              <button
-                type="button"
-                className="w-full rounded-xl px-3 py-2 text-left hover:bg-gray-100"
-              >
-                Lviv
-              </button>
-              <button
-                type="button"
-                className="w-full rounded-xl px-3 py-2 text-left hover:bg-gray-100"
-              >
-                Dnipro
-              </button>
-              <button
-                type="button"
-                className="w-full rounded-xl px-3 py-2 text-left hover:bg-gray-100"
-              >
-                Kharkiv
-              </button>
+              {destinations.map((destination) => (
+                <button
+                  key={destination}
+                  type="button"
+                  onClick={() => {
+                    setDestination(destination);
+                    setIsOpen(false);
+                  }}
+                  className="w-full rounded-xl px-3 py-2 text-left hover:bg-gray-100"
+                >
+                  {destination}
+                </button>
+              ))}
             </div>
           </div>
         )}
