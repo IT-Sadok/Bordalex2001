@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import useClickOutside from "../../../hooks/useClickOutside";
 
 const destinations = ["Kyiv", "Odesa", "Lviv", "Dnipro", "Kharkiv"];
 
@@ -6,6 +7,11 @@ export default function DestinationPicker() {
   const [isOpen, setIsOpen] = useState(false);
   const [destination, setDestination] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const destinationPickerRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside(destinationPickerRef, () => {
+    setIsOpen(false);
+  });
 
   const filteredDestinations = destinations.filter((destination) =>
     destination.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -13,7 +19,7 @@ export default function DestinationPicker() {
 
   return (
     <>
-      <div className="relative flex-1">
+      <div ref={destinationPickerRef} className="relative flex-1">
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
