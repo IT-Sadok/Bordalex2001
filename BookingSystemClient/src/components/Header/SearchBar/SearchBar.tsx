@@ -1,4 +1,4 @@
-import DatePicker from "./DatePicker";
+import DatePicker from "./DatePicker/DatePicker";
 import DestinationPicker from "./DestinationPicker";
 
 export default function SearchBar() {
