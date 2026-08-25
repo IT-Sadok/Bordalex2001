@@ -121,7 +121,7 @@ export default function Calendar({
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7">
           {days.map((day, index) => {
             if (!day) {
               return <div key={index} />;
@@ -134,18 +134,39 @@ export default function Calendar({
             const isInRange = isDateInRange(date, checkIn, checkOut);
 
             return (
-              <button
-                type="button"
-                onClick={() => handleDateSelect(date)}
-                className={`
-                        flex size-10 items-center justify-center rounded-full hover:bg-gray-100
-                        ${isCheckIn || isCheckOut ? "bg-black text-white" : ""}
-                        ${isInRange ? "bg-gray-200" : ""}
-                        ${!isCheckIn && !isCheckOut && !isInRange ? "hover:bg-gray-100" : ""}
-                      `}
+              <div
+                key={index}
+                className="relative flex h-10 items-center justify-center"
               >
-                {day}
-              </button>
+                {isInRange && (
+                  <div className="absolute inset-y-0 left-0 right-0 z-0 bg-gray-100" />
+                )}
+
+                {isCheckIn && checkOut && (
+                  <div className="absolute inset-y-0 left-1/2 right-0 z-0 bg-gray-100" />
+                )}
+
+                {isCheckOut && checkIn && (
+                  <div className="absolute inset-y-0 left-0 right-1/2 z-0 bg-gray-100" />
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => handleDateSelect(date)}
+                  className={`
+                        relative z-10 flex size-10 items-center justify-center rounded-full transition-colors
+                        ${
+                          isCheckIn || isCheckOut
+                            ? "bg-black text-white"
+                            : isInRange
+                              ? "text-gray-900"
+                              : "hover:bg-gray-100"
+                        }
+                      `}
+                >
+                  {day}
+                </button>
+              </div>
             );
           })}
         </div>
