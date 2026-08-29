@@ -20,6 +20,14 @@ export default function DatePicker() {
     });
   };
 
+  const handleCheckOutChange = (date: Date | null) => {
+    setCheckOut(date);
+
+    if (date) {
+      setIsOpen(false);
+    }
+  }
+
   return (
     <>
       <div ref={datePickerRef} className="relative flex-1">
@@ -44,7 +52,7 @@ export default function DatePicker() {
               checkIn={checkIn}
               checkOut={checkOut}
               onCheckInChange={setCheckIn}
-              onCheckOutChange={setCheckOut}
+              onCheckOutChange={handleCheckOutChange}
             />
           </div>
         )}

@@ -1,11 +1,6 @@
 import { useState } from "react";
 import type CalendarProps from "./CalendarProps";
-import {
-  getDaysInMonth,
-  getFirstDayOfMonth,
-  isDateInRange,
-  isSameDay,
-} from "./calendarUtils";
+import { getDaysInMonth, getFirstDayOfMonth, isSameDay } from "./calendarUtils";
 
 export default function Calendar({
   checkIn,
@@ -21,13 +16,25 @@ export default function Calendar({
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
 
-  const days = Array.from({ length: firstDay + daysInMonth }, (_, index) => {
+  const totalCells = firstDay + daysInMonth;
+
+  const days = Array.from({ length: totalCells }, (_, index) => {
     if (index < firstDay) {
       return null;
     }
 
     return index - firstDay + 1;
   });
+
+  while (days.length % 7 !== 0) {
+    days.push(null);
+  }
+
+  const weeks = [];
+
+  for (let i = 0; i < days.length; i += 7) {
+    weeks.push(days.slice(i, i + 7));
+  }
 
   const handleDateSelect = (date: Date) => {
     if (!checkIn || checkOut) {
@@ -121,51 +128,100 @@ export default function Calendar({
           ))}
         </div>
 
-        <div className="grid grid-cols-7">
-          {days.map((day, index) => {
-            if (!day) {
-              return <div key={index} />;
+        <div>
+          {weeks.map((week, weekIndex) => {
+            const checkInIndex = week.findIndex((day) => {
+              if (!day) return false;
+
+              const date = new Date(currentYear, currentMonth, day);
+
+              return isSameDay(date, checkIn);
+            });
+
+            const checkOutIndex = week.findIndex((day) => {
+              if (!day) return false;
+
+              const date = new Date(currentYear, currentMonth, day);
+
+              return isSameDay(date, checkOut);
+            });
+
+            let rangeLeft = 0;
+            let rangeWidth = 0;
+
+            if (checkIn && checkOut) {
+              const isStartWeek = checkInIndex !== -1;
+              const isEndWeek = checkOutIndex !== -1;
+
+              if (isStartWeek && isEndWeek) {
+                rangeLeft = ((checkInIndex + 0.5) / 7) * 100;
+                rangeWidth = ((checkOutIndex - checkInIndex) / 7) * 100;
+              } else if (isStartWeek) {
+                rangeLeft = ((checkInIndex + 0.5) / 7) * 100;
+                rangeWidth = 100 - rangeLeft;
+              } else if (isEndWeek) {
+                rangeLeft = 0;
+                rangeWidth = ((checkOutIndex + 0.5) / 7) * 100;
+              } else {
+                const isMiddleWeek = week.some((day) => {
+                  if (!day) return false;
+
+                  const date = new Date(currentYear, currentMonth, day);
+
+                  return date > checkIn && date < checkOut;
+                });
+
+                if (isMiddleWeek) {
+                  rangeLeft = 0;
+                  rangeWidth = 100;
+                }
+              }
             }
 
-            const date = new Date(currentYear, currentMonth, day);
-
-            const isCheckIn = isSameDay(date, checkIn);
-            const isCheckOut = isSameDay(date, checkOut);
-            const isInRange = isDateInRange(date, checkIn, checkOut);
-
             return (
-              <div
-                key={index}
-                className="relative flex h-10 items-center justify-center"
-              >
-                {isInRange && (
-                  <div className="absolute inset-y-0 left-0 right-0 z-0 bg-gray-100" />
+              <div key={weekIndex} className="relative grid grid-cols-7">
+                {rangeWidth > 0 && (
+                  <div
+                    className="absolute inset-y-0 z-0 bg-gray-100"
+                    style={{
+                      left: `${rangeLeft}%`,
+                      width: `${rangeWidth}%`,
+                    }}
+                  />
                 )}
 
-                {isCheckIn && checkOut && (
-                  <div className="absolute inset-y-0 left-1/2 right-0 z-0 bg-gray-100" />
-                )}
+                {week.map((day, dayIndex) => {
+                  if (!day) {
+                    return <div key={dayIndex} className="h-10" />;
+                  }
 
-                {isCheckOut && checkIn && (
-                  <div className="absolute inset-y-0 left-0 right-1/2 z-0 bg-gray-100" />
-                )}
+                  const date = new Date(currentYear, currentMonth, day);
 
-                <button
-                  type="button"
-                  onClick={() => handleDateSelect(date)}
-                  className={`
-                        relative z-10 flex size-10 items-center justify-center rounded-full transition-colors
+                  const isCheckIn = isSameDay(date, checkIn);
+                  const isCheckOut = isSameDay(date, checkOut);
+
+                  return (
+                    <div
+                      key={dayIndex}
+                      className="relative flex h-10 items-center justify-center"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleDateSelect(date)}
+                        className={`
+                        relative z-10 flex size-10 items-center justify-center rounded-full
                         ${
                           isCheckIn || isCheckOut
                             ? "bg-black text-white"
-                            : isInRange
-                              ? "text-gray-900"
-                              : "hover:bg-gray-100"
+                            : "hover:bg-gray-100"
                         }
                       `}
-                >
-                  {day}
-                </button>
+                      >
+                        {day}
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             );
           })}
