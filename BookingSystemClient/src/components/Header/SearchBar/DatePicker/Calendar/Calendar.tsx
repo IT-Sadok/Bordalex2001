@@ -8,7 +8,7 @@ export default function Calendar({
   onCheckInChange,
   onCheckOutChange,
 }: CalendarProps) {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 7, 1));
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 8, 1));
 
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
@@ -128,7 +128,7 @@ export default function Calendar({
           ))}
         </div>
 
-        <div>
+        <div className="flex flex-col gap-0.5">
           {weeks.map((week, weekIndex) => {
             const checkInIndex = week.findIndex((day) => {
               if (!day) return false;
@@ -146,8 +146,13 @@ export default function Calendar({
               return isSameDay(date, checkOut);
             });
 
+            const firstValidDayIndex = week.findIndex((day) => day !== null);
+            const lastValidDayIndex = week.findLastIndex((day) => day !== null);
+
             let rangeLeft = 0;
+            let rangeRight = 0;
             let rangeWidth = 0;
+            let rangeRadius = "";
 
             if (checkIn && checkOut) {
               const isStartWeek = checkInIndex !== -1;
@@ -158,10 +163,14 @@ export default function Calendar({
                 rangeWidth = ((checkOutIndex - checkInIndex) / 7) * 100;
               } else if (isStartWeek) {
                 rangeLeft = ((checkInIndex + 0.5) / 7) * 100;
-                rangeWidth = 100 - rangeLeft;
+                rangeRight = ((lastValidDayIndex + 1) / 7) * 100;
+                rangeWidth = rangeRight - rangeLeft;
+                rangeRadius = "rounded-r-md";
               } else if (isEndWeek) {
-                rangeLeft = 0;
-                rangeWidth = ((checkOutIndex + 0.5) / 7) * 100;
+                rangeLeft = (firstValidDayIndex / 7) * 100;
+                rangeRight = ((checkOutIndex + 0.5) / 7) * 100;
+                rangeWidth = rangeRight - rangeLeft;
+                rangeRadius = "rounded-l-md";
               } else {
                 const isMiddleWeek = week.some((day) => {
                   if (!day) return false;
@@ -172,17 +181,19 @@ export default function Calendar({
                 });
 
                 if (isMiddleWeek) {
-                  rangeLeft = 0;
-                  rangeWidth = 100;
+                  rangeLeft = (firstValidDayIndex / 7) * 100;
+                  rangeRight = ((lastValidDayIndex + 1) / 7) * 100;
+                  rangeWidth = rangeRight - rangeLeft;
+                  rangeRadius = "rounded-md";
                 }
               }
             }
 
             return (
-              <div key={weekIndex} className="relative grid grid-cols-7">
+              <div key={weekIndex} className="relative grid grid-cols-7 gap-y-2">
                 {rangeWidth > 0 && (
                   <div
-                    className="absolute inset-y-0 z-0 bg-gray-100"
+                    className={`absolute inset-y-0 z-0 bg-gray-100 ${rangeRadius}`}
                     style={{
                       left: `${rangeLeft}%`,
                       width: `${rangeWidth}%`,
