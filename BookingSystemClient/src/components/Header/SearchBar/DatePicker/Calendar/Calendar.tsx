@@ -73,6 +73,10 @@ export default function Calendar({
     year: "numeric",
   });
 
+  const isPastMonth =
+    currentYear < today.getFullYear() ||
+    (currentYear === today.getFullYear() && currentMonth === today.getMonth());
+
   return (
     <>
       <p className="mb-4 text-sm font-semibold">Select dates</p>
@@ -81,8 +85,9 @@ export default function Calendar({
         <div className="mb-4 flex items-center justify-between">
           <button
             type="button"
+            disabled={isPastMonth}
             onClick={goToPreviousMonth}
-            className="rounded-full p-2 hover:bg-gray-100"
+            className={`${isPastMonth ? "text-gray-300 cursor-not-allowed hover:none" : "cursor-pointer hover:bg-gray-100"} rounded-full p-2`}
             aria-label="Previous month"
           >
             <svg
@@ -104,7 +109,7 @@ export default function Calendar({
           <button
             type="button"
             onClick={goToNextMonth}
-            className="rounded-full p-2 hover:bg-gray-100"
+            className="rounded-full p-2 cursor-pointer hover:bg-gray-100"
             aria-label="Next month"
           >
             <svg
@@ -231,7 +236,7 @@ export default function Calendar({
                           handleDateSelect(date);
                         }}
                         className={`
-                        relative z-10 flex size-10 items-center justify-center rounded-full
+                        relative z-10 flex size-10 items-center justify-center rounded-full cursor-pointer
                         ${
                           isPastDate
                             ? "cursor-not-allowed text-gray-300"
