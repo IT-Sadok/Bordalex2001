@@ -13,6 +13,11 @@ export default function Calendar({
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
 
+  const getDate = (day: number) => new Date(currentYear, currentMonth, day);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
 
@@ -133,7 +138,7 @@ export default function Calendar({
             const checkInIndex = week.findIndex((day) => {
               if (!day) return false;
 
-              const date = new Date(currentYear, currentMonth, day);
+              const date = getDate(day);
 
               return isSameDay(date, checkIn);
             });
@@ -141,7 +146,7 @@ export default function Calendar({
             const checkOutIndex = week.findIndex((day) => {
               if (!day) return false;
 
-              const date = new Date(currentYear, currentMonth, day);
+              const date = getDate(day);
 
               return isSameDay(date, checkOut);
             });
@@ -175,7 +180,7 @@ export default function Calendar({
                 const isMiddleWeek = week.some((day) => {
                   if (!day) return false;
 
-                  const date = new Date(currentYear, currentMonth, day);
+                  const date = getDate(day);
 
                   return date > checkIn && date < checkOut;
                 });
@@ -190,7 +195,7 @@ export default function Calendar({
             }
 
             return (
-              <div key={weekIndex} className="relative grid grid-cols-7 gap-y-2">
+              <div key={weekIndex} className="relative grid grid-cols-7">
                 {rangeWidth > 0 && (
                   <div
                     className={`absolute inset-y-0 z-0 bg-gray-100 ${rangeRadius}`}
@@ -206,7 +211,9 @@ export default function Calendar({
                     return <div key={dayIndex} className="h-10" />;
                   }
 
-                  const date = new Date(currentYear, currentMonth, day);
+                  const date = getDate(day);
+
+                  const isPastDate = date < today;
 
                   const isCheckIn = isSameDay(date, checkIn);
                   const isCheckOut = isSameDay(date, checkOut);
@@ -218,13 +225,19 @@ export default function Calendar({
                     >
                       <button
                         type="button"
-                        onClick={() => handleDateSelect(date)}
+                        disabled={isPastDate}
+                        onClick={() => {
+                          if (isPastDate) return;
+                          handleDateSelect(date);
+                        }}
                         className={`
                         relative z-10 flex size-10 items-center justify-center rounded-full
                         ${
-                          isCheckIn || isCheckOut
-                            ? "bg-black text-white"
-                            : "hover:bg-gray-100"
+                          isPastDate
+                            ? "cursor-not-allowed text-gray-300"
+                            : isCheckIn || isCheckOut
+                              ? "bg-black text-white"
+                              : "hover:bg-gray-100"
                         }
                       `}
                       >

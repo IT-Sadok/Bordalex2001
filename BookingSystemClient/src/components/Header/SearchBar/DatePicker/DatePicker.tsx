@@ -47,7 +47,7 @@ export default function DatePicker() {
         </button>
 
         {isOpen && (
-          <div className="absolute left-1/2 top-full z-50 mt-4 w-[350px] -translate-x-1/2 rounded-2xl border border-gray-200 bg-white p-4 shadow-lg">
+          <div className="absolute left-1/2 top-full z-50 mt-4 w-87.5 -translate-x-1/2 rounded-2xl border border-gray-200 bg-white p-4 shadow-lg">
             <Calendar
               checkIn={checkIn}
               checkOut={checkOut}
