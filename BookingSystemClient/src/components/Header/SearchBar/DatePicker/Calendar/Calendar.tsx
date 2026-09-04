@@ -79,7 +79,7 @@ export default function Calendar({
 
   return (
     <>
-      <p className="mb-4 text-sm font-semibold">Select dates</p>
+      <p className="mb-3 text-sm font-semibold">Select dates</p>
 
       <div>
         <div className="mb-4 flex items-center justify-between">

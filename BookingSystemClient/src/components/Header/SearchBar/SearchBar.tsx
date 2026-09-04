@@ -1,5 +1,6 @@
 import DatePicker from "./DatePicker/DatePicker";
 import DestinationPicker from "./DestinationPicker";
+import GuestPicker from "./GuestPicker";
 
 export default function SearchBar() {
   return (
@@ -12,12 +13,7 @@ export default function SearchBar() {
             <span className="border-l border-gray-300 h-6" />
             <DatePicker />
             <span className="border-l border-gray-300 h-6" />
-            <button
-              type="button"
-              className="min-w-0 flex-1 truncate px-2 py-2 text-center text-sm font-medium sm:px-3 sm:text-base hover:bg-gray-100 rounded-2xl"
-            >
-              Add guests
-            </button>
+            <GuestPicker />
           </div>
 
           {/* Search button*/}
