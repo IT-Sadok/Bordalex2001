@@ -23,6 +23,29 @@ export default function GuestPicker() {
     setIsOpen(false);
   });
 
+  const totalGuests = adults + children;
+
+  const guestSummaryParts = [];
+
+  if (totalGuests > 0) {
+    guestSummaryParts.push(
+      `${totalGuests} ${totalGuests === 1 ? "guest" : "guests"}`,
+    );
+  }
+
+  if (infants > 0) {
+    guestSummaryParts.push(
+      `${infants} ${infants === 1 ? "infant" : "infants"}`,
+    );
+  }
+
+  if (pets > 0) {
+    guestSummaryParts.push(`${pets} ${pets === 1 ? "pet" : "pets"}`);
+  }
+
+  const guestSummary =
+    guestSummaryParts.length > 0 ? guestSummaryParts.join(", ") : "Add guests";
+
   return (
     <>
       <div ref={guestPickerRef} className="relative">
@@ -31,8 +54,10 @@ export default function GuestPicker() {
           onClick={() => setIsOpen(!isOpen)}
           className="rounded-2xl px-3 py-2 text-left hover:bg-gray-100"
         >
-          <div className="text-xs font-semibold">Who</div>
-          <div className="text-sm text-gray-500">Add guests</div>
+          <span className="block text-xs font-semibold">Who</span>
+          <span className="block truncate text-sm text-gray-500">
+            {guestSummary}
+          </span>
         </button>
 
         {isOpen && (
