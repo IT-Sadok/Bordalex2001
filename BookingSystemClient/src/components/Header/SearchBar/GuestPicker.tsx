@@ -9,6 +9,10 @@ const decrement = (setter: Dispatch<SetStateAction<number>>) => {
   setter((prev) => (prev > 0 ? prev - 1 : 0));
 };
 
+const MAX_GUESTS = 16;
+const MAX_INFANTS = 5;
+const MAX_PETS = 5;
+
 export default function GuestPicker() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -24,6 +28,8 @@ export default function GuestPicker() {
   });
 
   const totalGuests = adults + children;
+
+  const canAddGuest = totalGuests < MAX_GUESTS;
 
   const guestSummaryParts = [];
 
@@ -88,7 +94,8 @@ export default function GuestPicker() {
                   <button
                     type="button"
                     onClick={() => increment(setAdults)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all cursor-pointer"
+                    disabled={!canAddGuest}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all ${!canAddGuest ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -125,7 +132,8 @@ export default function GuestPicker() {
                   <button
                     type="button"
                     onClick={() => increment(setChildren)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all cursor-pointer"
+                    disabled={!canAddGuest}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all ${!canAddGuest ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -162,7 +170,8 @@ export default function GuestPicker() {
                   <button
                     type="button"
                     onClick={() => increment(setInfants)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all cursor-pointer"
+                    disabled={infants >= MAX_INFANTS}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all ${infants >= MAX_INFANTS ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -201,7 +210,8 @@ export default function GuestPicker() {
                   <button
                     type="button"
                     onClick={() => increment(setPets)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all cursor-pointer"
+                    disabled={pets >= MAX_PETS}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all ${pets >= MAX_PETS ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
