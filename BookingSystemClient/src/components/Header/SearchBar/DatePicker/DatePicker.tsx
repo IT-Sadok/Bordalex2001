@@ -1,11 +1,15 @@
 import { useRef, useState } from "react";
 import useClickOutside from "../../../../hooks/useClickOutside";
 import Calendar from "./Calendar/Calendar";
+import type DatePickerProps from "./DatePickerProps";
 
-export default function DatePicker() {
+export default function DatePicker({
+  checkIn,
+  checkOut,
+  setCheckIn,
+  setCheckOut,
+}: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [checkIn, setCheckIn] = useState<Date | null>(null);
-  const [checkOut, setCheckOut] = useState<Date | null>(null);
 
   const datePickerRef = useRef<HTMLDivElement>(null);
 
@@ -26,7 +30,7 @@ export default function DatePicker() {
     if (date) {
       setIsOpen(false);
     }
-  }
+  };
 
   return (
     <>

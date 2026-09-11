@@ -1,9 +1,14 @@
 import { useState } from "react";
 import DatePicker from "./DatePicker/DatePicker";
-import DestinationPicker from "./DestinationPicker";
+import DestinationPicker from "./DestinationPicker/DestinationPicker";
 import GuestPicker from "./GuestPicker/GuestPicker";
 
 export default function SearchBar() {
+  const [destination, setDestination] = useState("");
+
+  const [checkIn, setCheckIn] = useState<Date | null>(null);
+  const [checkOut, setCheckOut] = useState<Date | null>(null);
+
   const [adults, setAdults] = useState(0);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
@@ -15,9 +20,17 @@ export default function SearchBar() {
         <div className="flex w-full items-center gap-1 px-2 py-2 border border-gray-300 rounded-3xl hover:shadow-lg transition-all">
           {/* Search options */}
           <div className="flex min-w-0 flex-1 items-center">
-            <DestinationPicker />
+            <DestinationPicker
+              destination={destination}
+              setDestination={setDestination}
+            />
             <span className="border-l border-gray-300 h-6" />
-            <DatePicker />
+            <DatePicker
+              checkIn={checkIn}
+              checkOut={checkOut}
+              setCheckIn={setCheckIn}
+              setCheckOut={setCheckOut}
+            />
             <span className="border-l border-gray-300 h-6" />
             <GuestPicker
               adults={adults}

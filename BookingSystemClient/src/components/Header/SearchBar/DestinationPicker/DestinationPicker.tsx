@@ -1,12 +1,16 @@
 import { useRef, useState } from "react";
-import useClickOutside from "../../../hooks/useClickOutside";
+import useClickOutside from "../../../../hooks/useClickOutside";
+import type DestinationPickerProps from "./DestinationPickerProps";
 
 const destinations = ["Kyiv", "Odesa", "Lviv", "Dnipro", "Kharkiv"];
 
-export default function DestinationPicker() {
+export default function DestinationPicker({
+  destination,
+  setDestination,
+}: DestinationPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [destination, setDestination] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+
   const destinationPickerRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(destinationPickerRef, () => {
