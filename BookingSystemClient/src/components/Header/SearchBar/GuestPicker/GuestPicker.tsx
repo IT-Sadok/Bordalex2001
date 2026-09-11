@@ -1,5 +1,6 @@
 import { useRef, useState, type Dispatch, type SetStateAction } from "react";
-import useClickOutside from "../../../hooks/useClickOutside";
+import useClickOutside from "../../../../hooks/useClickOutside";
+import type GuestPickerProps from "./GuestPickerProps";
 
 const increment = (setter: Dispatch<SetStateAction<number>>) => {
   setter((prev) => prev + 1);
@@ -13,13 +14,17 @@ const MAX_GUESTS = 16;
 const MAX_INFANTS = 5;
 const MAX_PETS = 5;
 
-export default function GuestPicker() {
+export default function GuestPicker({
+  adults,
+  children,
+  infants,
+  pets,
+  setAdults,
+  setChildren,
+  setInfants,
+  setPets,
+}: GuestPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
-
-  const [adults, setAdults] = useState(0);
-  const [children, setChildren] = useState(0);
-  const [infants, setInfants] = useState(0);
-  const [pets, setPets] = useState(0);
 
   const guestPickerRef = useRef<HTMLDivElement>(null);
 

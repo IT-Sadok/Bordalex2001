@@ -1,8 +1,14 @@
+import { useState } from "react";
 import DatePicker from "./DatePicker/DatePicker";
 import DestinationPicker from "./DestinationPicker";
-import GuestPicker from "./GuestPicker";
+import GuestPicker from "./GuestPicker/GuestPicker";
 
 export default function SearchBar() {
+  const [adults, setAdults] = useState(0);
+  const [children, setChildren] = useState(0);
+  const [infants, setInfants] = useState(0);
+  const [pets, setPets] = useState(0);
+
   return (
     <>
       <form role="search" className="mx-auto w-full max-w-xl">
@@ -13,7 +19,16 @@ export default function SearchBar() {
             <span className="border-l border-gray-300 h-6" />
             <DatePicker />
             <span className="border-l border-gray-300 h-6" />
-            <GuestPicker />
+            <GuestPicker
+              adults={adults}
+              children={children}
+              infants={infants}
+              pets={pets}
+              setAdults={setAdults}
+              setChildren={setChildren}
+              setInfants={setInfants}
+              setPets={setPets}
+            />
           </div>
 
           {/* Search button*/}
