@@ -15,6 +15,31 @@ export default function SearchBar() {
   const [pets, setPets] = useState(0);
 
   const handleSearch = () => {
+    if (!destination) {
+      console.log("Please select a destination");
+      return;
+    }
+
+    if (!checkIn) {
+      console.log("Please select a check-in date");
+      return;
+    }
+
+    if (!checkOut) {
+      console.log("Please select a check-out date");
+      return;
+    }
+
+    if (checkOut <= checkIn) {
+      console.log("Check-out date must be after check-in date");
+      return;
+    }
+
+    if (adults < 1) {
+      console.log("Please select at least one adult");
+      return;
+    }
+
     const searchData = {
       destination,
       dates: { checkIn, checkOut },
