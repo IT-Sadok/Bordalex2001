@@ -14,6 +14,20 @@ export default function SearchBar() {
   const [infants, setInfants] = useState(0);
   const [pets, setPets] = useState(0);
 
+  const handleSearch = () => {
+    const searchData = {
+      destination,
+      dates: { checkIn, checkOut },
+      guests: {
+        adults,
+        children,
+        infants,
+        pets,
+      },
+    };
+    console.log(searchData);
+  };
+
   return (
     <>
       <form role="search" className="mx-auto w-full max-w-xl">
@@ -46,7 +60,8 @@ export default function SearchBar() {
 
           {/* Search button*/}
           <button
-            type="submit"
+            type="button"
+            onClick={handleSearch}
             className="flex shrink-0 items-center justify-center bg-red-500 hover:bg-red-600 p-2 rounded-2xl transition-all"
             aria-label="Search"
           >
