@@ -23,6 +23,7 @@ export default function GuestPicker({
   setChildren,
   setInfants,
   setPets,
+  error,
 }: GuestPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -63,13 +64,15 @@ export default function GuestPicker({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="rounded-2xl px-3 py-2 text-left hover:bg-gray-100"
+          className={`rounded-2xl px-3 py-2 text-left hover:bg-gray-100 ${error ? "ring-2 ring-red-500" : ""}`}
         >
           <span className="block text-xs font-semibold">Who</span>
           <span className="block truncate text-sm text-gray-500">
             {guestSummary}
           </span>
         </button>
+
+        {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
 
         {isOpen && (
           <div className="absolute right-0 top-full z-10 mt-4 p-6 w-85 rounded-2xl bg-white shadow-lg">

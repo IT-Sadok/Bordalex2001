@@ -10,4 +10,6 @@ export default interface GuestPickerProps {
   setChildren: Dispatch<SetStateAction<number>>;
   setInfants: Dispatch<SetStateAction<number>>;
   setPets: Dispatch<SetStateAction<number>>;
+
+  error?: string;
 }

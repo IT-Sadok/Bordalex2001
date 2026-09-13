@@ -7,6 +7,7 @@ const destinations = ["Kyiv", "Odesa", "Lviv", "Dnipro", "Kharkiv"];
 export default function DestinationPicker({
   destination,
   setDestination,
+  error,
 }: DestinationPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,13 +28,15 @@ export default function DestinationPicker({
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="w-full rounded-2xl px-3 py-2 text-left hover:bg-gray-100"
+          className={`w-full rounded-2xl px-3 py-2 text-left hover:bg-gray-100 ${error ? "ring-2 ring-red-500" : ""}`}
         >
           <span className="block text-xs font-semibold">Where</span>
           <span className="block truncate text-sm text-gray-500">
             {destination || "Anywhere"}
           </span>
         </button>
+
+        {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
 
         {isOpen && (
           <div className="absolute left-0 top-full z-50 mt-4 w-80 rounded-2xl border border-gray-200 bg-white p-4 shadow-lg">

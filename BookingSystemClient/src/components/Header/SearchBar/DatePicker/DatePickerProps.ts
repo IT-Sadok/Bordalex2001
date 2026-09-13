@@ -5,4 +5,5 @@ export default interface DatePickerProps {
   checkOut: Date | null;
   setCheckIn: Dispatch<SetStateAction<Date | null>>;
   setCheckOut: Dispatch<SetStateAction<Date | null>>;
+  error?: string;
 }

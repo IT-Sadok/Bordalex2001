@@ -2,6 +2,7 @@ import { useState } from "react";
 import DatePicker from "./DatePicker/DatePicker";
 import DestinationPicker from "./DestinationPicker/DestinationPicker";
 import GuestPicker from "./GuestPicker/GuestPicker";
+import type SearchErrors from "./SearchErrors";
 
 export default function SearchBar() {
   const [destination, setDestination] = useState("");
@@ -14,29 +15,30 @@ export default function SearchBar() {
   const [infants, setInfants] = useState(0);
   const [pets, setPets] = useState(0);
 
+  const [errors, setErrors] = useState<SearchErrors>({});
+
   const handleSearch = () => {
+    const errors: SearchErrors = {};
+
     if (!destination) {
-      console.log("Please select a destination");
-      return;
+      errors.destination = "Please select a destination";
     }
 
     if (!checkIn) {
-      console.log("Please select a check-in date");
-      return;
-    }
-
-    if (!checkOut) {
-      console.log("Please select a check-out date");
-      return;
-    }
-
-    if (checkOut <= checkIn) {
-      console.log("Check-out date must be after check-in date");
-      return;
+      errors.dates = "Please select a check-in date";
+    } else if (!checkOut) {
+      errors.dates = "Please select a check-out date";
+    } else if (checkOut <= checkIn) {
+      errors.dates = "Check-out date must be after check-in date";
     }
 
     if (adults < 1) {
-      console.log("Please select at least one adult");
+      errors.guests = "Please select at least one adult";
+    }
+
+    setErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
       return;
     }
 
@@ -50,18 +52,20 @@ export default function SearchBar() {
         pets,
       },
     };
+
     console.log(searchData);
   };
 
   return (
     <>
-      <form role="search" className="mx-auto w-full max-w-xl">
+      <form role="search" className="mx-auto w-full h-full max-w-xl">
         <div className="flex w-full items-center gap-1 px-2 py-2 border border-gray-300 rounded-3xl hover:shadow-lg transition-all">
           {/* Search options */}
           <div className="flex min-w-0 flex-1 items-center">
             <DestinationPicker
               destination={destination}
               setDestination={setDestination}
+              error={errors.destination}
             />
             <span className="border-l border-gray-300 h-6" />
             <DatePicker
@@ -69,6 +73,7 @@ export default function SearchBar() {
               checkOut={checkOut}
               setCheckIn={setCheckIn}
               setCheckOut={setCheckOut}
+              error={errors.dates}
             />
             <span className="border-l border-gray-300 h-6" />
             <GuestPicker
@@ -80,6 +85,7 @@ export default function SearchBar() {
               setChildren={setChildren}
               setInfants={setInfants}
               setPets={setPets}
+              error={errors.guests}
             />
           </div>
 
