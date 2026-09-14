@@ -59,9 +59,9 @@ export default function SearchBar() {
   return (
     <>
       <form role="search" className="mx-auto w-full h-full max-w-xl">
-        <div className="flex w-full items-center gap-1 px-2 py-2 border border-gray-300 rounded-3xl hover:shadow-lg transition-all">
+        <div className="flex h-16 w-full items-stretch gap-1 px-2 py-2 border border-gray-300 rounded-3xl shadow-sm hover:shadow-lg transition-all">
           {/* Search options */}
-          <div className="flex min-w-0 flex-1 items-center">
+          <div className="flex h-full min-w-0 flex-1 items-center">
             <DestinationPicker
               destination={destination}
               setDestination={setDestination}
@@ -93,14 +93,14 @@ export default function SearchBar() {
           <button
             type="button"
             onClick={handleSearch}
-            className="flex shrink-0 items-center justify-center bg-red-500 hover:bg-red-600 p-2 rounded-2xl transition-all"
+            className="flex h-8 w-8 shrink-0 items-center justify-center self-center bg-red-500 hover:bg-red-600 rounded-2xl transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-300"
             aria-label="Search"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
               fill="white"
-              className="size-4"
+              className="size-4.5"
             >
               <path
                 fillRule="evenodd"

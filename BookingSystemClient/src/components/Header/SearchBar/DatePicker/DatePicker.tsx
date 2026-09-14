@@ -35,11 +35,11 @@ export default function DatePicker({
 
   return (
     <>
-      <div ref={datePickerRef} className="relative flex-1">
+      <div ref={datePickerRef} className="relative h-full min-w-0 flex-1">
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className={`w-full rounded-2xl px-3 py-2 text-left hover:bg-gray-100 ${error ? "ring-2 ring-red-500" : ""}`}
+          className={`flex h-full w-full min-w-0 flex-col justify-center rounded-2xl px-3 text-left hover:bg-gray-100 ${error ? "ring-2 ring-red-500" : ""}`}
         >
           <span className="block text-xs font-semibold">When</span>
           <span className="block truncate text-sm text-gray-500">
@@ -51,7 +51,11 @@ export default function DatePicker({
           </span>
         </button>
 
-        {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+        {error && (
+          <p className="absolute left-0 top-full mt-1 text-xs text-red-500">
+            {error}
+          </p>
+        )}
 
         {isOpen && (
           <div className="absolute left-1/2 top-full z-50 mt-4 w-87.5 -translate-x-1/2 rounded-2xl border border-gray-200 bg-white p-4 shadow-lg">
