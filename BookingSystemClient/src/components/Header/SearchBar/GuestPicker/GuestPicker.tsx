@@ -23,6 +23,7 @@ export default function GuestPicker({
   setChildren,
   setInfants,
   setPets,
+  onAdultsChange,
   error,
 }: GuestPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,6 +59,20 @@ export default function GuestPicker({
   const guestSummary =
     guestSummaryParts.length > 0 ? guestSummaryParts.join(", ") : "Add guests";
 
+  const handleIncrementAdults = () => {
+    const _adults = adults + 1;
+
+    setAdults(_adults);
+    onAdultsChange?.(_adults);
+  }
+
+  const handleDecrementAdults = () => {
+    const _adults = adults > 0 ? adults - 1 : 0;
+
+    setAdults(_adults);
+    onAdultsChange?.(_adults);
+  }
+
   return (
     <>
       <div ref={guestPickerRef} className="relative h-full min-w-0 flex-1">
@@ -89,7 +104,7 @@ export default function GuestPicker({
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
-                    onClick={() => decrement(setAdults)}
+                    onClick={() => decrement(handleDecrementAdults)}
                     disabled={adults === 0}
                     className={`flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all ${adults === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                   >
@@ -105,7 +120,7 @@ export default function GuestPicker({
                   <span>{adults}</span>
                   <button
                     type="button"
-                    onClick={() => increment(setAdults)}
+                    onClick={() => increment(handleIncrementAdults)}
                     disabled={!canAddGuest}
                     className={`flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all ${!canAddGuest ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                   >

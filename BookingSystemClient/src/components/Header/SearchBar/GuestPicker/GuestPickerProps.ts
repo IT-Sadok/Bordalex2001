@@ -11,5 +11,7 @@ export default interface GuestPickerProps {
   setInfants: Dispatch<SetStateAction<number>>;
   setPets: Dispatch<SetStateAction<number>>;
 
+  onAdultsChange?: (adults: number) => void;
+
   error?: string;
 }

@@ -17,6 +17,43 @@ export default function SearchBar() {
 
   const [errors, setErrors] = useState<SearchErrors>({});
 
+  const clearErrors = (field: keyof SearchErrors) => {
+    setErrors((prev) => ({
+      ...prev,
+      [field]: undefined,
+    }));
+  };
+
+  const handleDestinationChange = (value: string) => {
+    setDestination(value);
+
+    if (value) {
+      clearErrors("destination");
+    }
+  }
+
+  const handleCheckInChange = (date: Date | null) => {
+    setCheckIn(date);
+
+    if (date && checkOut && checkOut > date) {
+      clearErrors("dates");
+    }
+  }
+
+  const handleCheckOutChange = (date: Date | null) => {
+    setCheckOut(date);
+
+    if (checkIn && date && date > checkIn) {
+      clearErrors("dates");
+    }
+  }
+
+  const handleAdultsChange = (value: number) => {
+    if (value >= 1) {
+      clearErrors("guests");
+    }
+  }
+
   const handleSearch = () => {
     const errors: SearchErrors = {};
 
@@ -64,15 +101,15 @@ export default function SearchBar() {
           <div className="flex h-full min-w-0 flex-1 items-center">
             <DestinationPicker
               destination={destination}
-              setDestination={setDestination}
+              setDestination={handleDestinationChange}
               error={errors.destination}
             />
             <span className="border-l border-gray-300 h-6" />
             <DatePicker
               checkIn={checkIn}
               checkOut={checkOut}
-              setCheckIn={setCheckIn}
-              setCheckOut={setCheckOut}
+              setCheckIn={handleCheckInChange}
+              setCheckOut={handleCheckOutChange}
               error={errors.dates}
             />
             <span className="border-l border-gray-300 h-6" />
@@ -85,6 +122,7 @@ export default function SearchBar() {
               setChildren={setChildren}
               setInfants={setInfants}
               setPets={setPets}
+              onAdultsChange={handleAdultsChange}
               error={errors.guests}
             />
           </div>
