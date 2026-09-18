@@ -47,13 +47,13 @@ export default function DestinationPicker({
 
         {isOpen && (
           <div className="absolute left-0 top-full z-50 mt-4 w-80 rounded-2xl border border-gray-200 bg-white p-4 shadow-lg">
-            <p className="mb-3 text-sm font-semibold">Search destinations</p>
+            <p className="mb-3 text-sm font-semibold">Suggested destinations</p>
 
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search destinations"
+              placeholder="Choose or enter a destination"
               className="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
             />
 

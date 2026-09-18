@@ -95,7 +95,7 @@ export default function SearchBar() {
 
   return (
     <>
-      <form role="search" className="mx-auto w-full h-full max-w-xl">
+      <form role="search" className="mx-auto w-full h-full max-w-md md:max-w-lg lg:max-w-xl">
         <div className="flex h-16 w-full items-stretch gap-1 px-2 py-2 border border-gray-300 rounded-3xl shadow-sm hover:shadow-lg transition-all">
           {/* Search options */}
           <div className="flex h-full min-w-0 flex-1 items-center">
