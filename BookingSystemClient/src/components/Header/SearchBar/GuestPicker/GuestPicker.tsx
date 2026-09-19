@@ -64,14 +64,14 @@ export default function GuestPicker({
 
     setAdults(_adults);
     onAdultsChange?.(_adults);
-  }
+  };
 
   const handleDecrementAdults = () => {
     const _adults = adults > 0 ? adults - 1 : 0;
 
     setAdults(_adults);
     onAdultsChange?.(_adults);
-  }
+  };
 
   return (
     <>
@@ -79,7 +79,7 @@ export default function GuestPicker({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex h-full w-full min-w-0 flex-col justify-center rounded-2xl px-3 text-left hover:bg-gray-100 ${error ? "ring-2 ring-red-500" : ""}`}
+          className={`flex h-full w-full min-w-0 flex-col justify-center rounded-2xl px-2 md:px-3 text-left hover:bg-gray-100 ${error ? "ring-2 ring-red-500" : ""}`}
         >
           <span className="block text-xs font-semibold">Who</span>
           <span className="block truncate text-sm text-gray-500">
@@ -88,13 +88,13 @@ export default function GuestPicker({
         </button>
 
         {error && (
-          <p className="absolute left-0 top-full mt-1 text-xs text-red-500">
+          <p className="absolute left-0 top-full z-20 mt-1 text-xs text-red-500">
             {error}
           </p>
         )}
 
         {isOpen && (
-          <div className="absolute right-0 top-full z-10 mt-4 p-6 w-85 rounded-2xl border border-gray-200 bg-white shadow-lg">
+          <div className="absolute right-0 top-full z-50 mt-4 p-4 sm:p-6 w-[min(21.25rem,calc(100vw-2rem))] rounded-2xl border border-gray-200 bg-white shadow-lg">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -104,7 +104,7 @@ export default function GuestPicker({
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
-                    onClick={() => decrement(handleDecrementAdults)}
+                    onClick={handleDecrementAdults}
                     disabled={adults === 0}
                     className={`flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all ${adults === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                   >
@@ -120,7 +120,7 @@ export default function GuestPicker({
                   <span>{adults}</span>
                   <button
                     type="button"
-                    onClick={() => increment(handleIncrementAdults)}
+                    onClick={handleIncrementAdults}
                     disabled={!canAddGuest}
                     className={`flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-all ${!canAddGuest ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                   >
