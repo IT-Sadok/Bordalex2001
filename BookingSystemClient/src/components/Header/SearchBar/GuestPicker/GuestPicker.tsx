@@ -94,7 +94,7 @@ export default function GuestPicker({
         )}
 
         {isOpen && (
-          <div className="absolute right-0 top-full z-50 mt-4 p-4 sm:p-6 w-[min(19.25rem,calc(100vw-2rem))] sm:w-85 rounded-2xl border border-gray-200 bg-white shadow-lg">
+          <div className="absolute -right-12 top-full z-50 mt-4 p-4 sm:p-6 w-[calc(100vw-2rem)] max-w-85 sm:right-0 sm:w-85 rounded-2xl border border-gray-200 bg-white shadow-lg">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>

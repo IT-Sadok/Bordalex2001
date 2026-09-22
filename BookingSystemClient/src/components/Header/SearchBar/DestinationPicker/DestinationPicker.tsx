@@ -46,7 +46,7 @@ export default function DestinationPicker({
         )}
 
         {isOpen && (
-          <div className="absolute left-0 top-full z-50 mt-4 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-gray-200 bg-white p-3 sm:p-4 shadow-lg">
+          <div className="absolute -left-5 top-full z-50 mt-4 w-[calc(100vw-2rem)] max-w-[20rem] sm:left-0 sm:w-[20rem] rounded-2xl border border-gray-200 bg-white p-3 sm:p-4 shadow-lg">
             <p className="mb-3 text-sm font-semibold">Suggested destinations</p>
 
             <input
