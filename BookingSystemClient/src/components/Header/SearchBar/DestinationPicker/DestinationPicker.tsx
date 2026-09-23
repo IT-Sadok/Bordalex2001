@@ -1,0 +1,87 @@
+import { useRef, useState } from "react";
+import useClickOutside from "../../../../hooks/useClickOutside";
+import type DestinationPickerProps from "./DestinationPickerProps";
+
+const destinations = ["Kyiv", "Odesa", "Lviv", "Dnipro", "Kharkiv"];
+
+export default function DestinationPicker({
+  destination,
+  setDestination,
+  error,
+}: DestinationPickerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const destinationPickerRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside(destinationPickerRef, () => {
+    setIsOpen(false);
+  });
+
+  const filteredDestinations = destinations.filter((destination) =>
+    destination.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
+  return (
+    <>
+      <div
+        ref={destinationPickerRef}
+        className="relative h-full min-w-0 flex-1"
+      >
+        <button
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          className={`flex h-full w-full min-w-0 flex-col justify-center rounded-2xl px-2 md:px-3 text-left hover:bg-gray-100 ${error ? "ring-2 ring-red-500" : ""}`}
+        >
+          <span className="block text-xs font-semibold">Where</span>
+          <span className="block w-full truncate text-sm text-gray-500">
+            {destination || "Anywhere"}
+          </span>
+        </button>
+
+        {error && (
+          <p className="absolute left-0 top-full z-20 mt-1 text-xs text-red-500">
+            {error}
+          </p>
+        )}
+
+        {isOpen && (
+          <div className="absolute -left-5 top-full z-50 mt-4 w-[calc(100vw-2rem)] max-w-[20rem] sm:left-0 sm:w-[20rem] rounded-2xl border border-gray-200 bg-white p-3 sm:p-4 shadow-lg">
+            <p className="mb-3 text-sm font-semibold">Suggested destinations</p>
+
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Choose or enter a destination"
+              className="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
+            />
+
+            <div className="mt-3">
+              {filteredDestinations.length > 0 ? (
+                filteredDestinations.map((destination) => (
+                  <button
+                    key={destination}
+                    type="button"
+                    onClick={() => {
+                      setDestination(destination);
+                      setIsOpen(false);
+                      setSearchQuery("");
+                    }}
+                    className="w-full rounded-xl px-3 py-2 text-left hover:bg-gray-100"
+                  >
+                    {destination}
+                  </button>
+                ))
+              ) : (
+                <p className="px-3 py-2 text-sm text-gray-500">
+                  No destinations found
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
