@@ -1,11 +1,11 @@
-import { Outlet } from "react-router";
+import ApartmentGrid from "./Apartments/ApartmentGrid/ApartmentGrid";
 
 export default function Main() {
-    return (
-        <>
-            <main>
-                <Outlet />
-            </main>
-        </>
-    )
+  return (
+    <>
+      <main>
+        <ApartmentGrid />
+      </main>
+    </>
+  );
 }
