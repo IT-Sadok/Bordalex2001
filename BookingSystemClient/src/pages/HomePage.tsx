@@ -1,4 +1,5 @@
 import ApartmentGrid from "../components/Apartments/ApartmentGrid/ApartmentGrid";
+import mockApartments from "../components/Apartments/mockApartments";
 
 export default function HomePage() {
   return (
@@ -30,7 +31,7 @@ export default function HomePage() {
             </button>
           </div>
 
-          <ApartmentGrid />
+          <ApartmentGrid apartments={mockApartments} />
         </section>
       </div>
     </>
