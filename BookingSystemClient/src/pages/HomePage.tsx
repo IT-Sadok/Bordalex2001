@@ -1,7 +1,23 @@
+import { useEffect } from "react";
 import ApartmentGrid from "../components/Apartments/ApartmentGrid/ApartmentGrid";
 import mockApartments from "../components/Apartments/mockApartments";
+import { getAllAvailableApartmentsAsync } from "../services/apartmentService";
 
 export default function HomePage() {
+  useEffect(() => {
+    const loadApartmentsAsync = async () => {
+      try {
+        const result = await getAllAvailableApartmentsAsync(1, 8);
+
+        console.log("Apartments response:", result);
+      } catch (error) {
+        console.error("Error loading apartments:", error);
+      }
+    };
+
+    loadApartmentsAsync();
+  }, []);
+
   return (
     <>
       <div className="mx-auto w-full px-4 py-8 sm:px-6 lg:px-8">

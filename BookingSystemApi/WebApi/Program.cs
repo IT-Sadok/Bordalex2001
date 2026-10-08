@@ -11,7 +11,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen(options => {
+builder.Services.AddSwaggerGen(options =>
+{
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -40,6 +41,17 @@ builder.Services.AddSwaggerGen(options => {
 
 builder.Services.AddApplication()
     .AddInfrastructure(builder.Configuration);
+
+const string frontendCorsPolicy = "FrontendCorsPolicy";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(frontendCorsPolicy, policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader().AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -73,6 +85,10 @@ app.UseSwaggerUI(options =>
 });
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors(frontendCorsPolicy);
 
 app.UseAuthentication();
 
