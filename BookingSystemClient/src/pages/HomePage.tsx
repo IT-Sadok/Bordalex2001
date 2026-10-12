@@ -1,22 +1,37 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ApartmentGrid from "../components/Apartments/ApartmentGrid/ApartmentGrid";
-import mockApartments from "../components/Apartments/mockApartments";
 import { getAllAvailableApartmentsAsync } from "../services/apartmentService";
+import type Apartment from "../types/Apartment";
+import type ApartmentCardProps from "../components/Apartments/ApartmentCard/ApartmentCardProps";
+
+const mapApartmentToCard = (apartment: Apartment): ApartmentCardProps => ({
+  id: apartment.id,
+  title: apartment.title,
+  location: apartment.address,
+  pricePerNight: apartment.pricePerNight,
+});
 
 export default function HomePage() {
-  useEffect(() => {
-    const loadApartmentsAsync = async () => {
-      try {
-        const result = await getAllAvailableApartmentsAsync(1, 8);
+  const [apartments, setApartments] = useState<ApartmentCardProps[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-        console.log("Apartments response:", result);
-      } catch (error) {
-        console.error("Error loading apartments:", error);
-      }
-    };
+  const loadApartmentsAsync = useCallback(async () => {
+    try {
+      const result = await getAllAvailableApartmentsAsync(1, 8);
 
-    loadApartmentsAsync();
+      setApartments(result.items.map(mapApartmentToCard));
+    } catch (error) {
+      console.error("Error loading apartments:", error);
+      setError("Failed to load apartments. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void loadApartmentsAsync();
+  }, [loadApartmentsAsync]);
 
   return (
     <>
@@ -47,7 +62,12 @@ export default function HomePage() {
             </button>
           </div>
 
-          <ApartmentGrid apartments={mockApartments} />
+          <ApartmentGrid
+            apartments={apartments}
+            isLoading={isLoading}
+            error={error}
+            onRetry={() => void loadApartmentsAsync()}
+          />
         </section>
       </div>
     </>

@@ -1,8 +1,8 @@
 export default interface ApartmentCardProps {
-  id: number;
+  id: string;
   title: string;
   location: string;
   pricePerNight: number;
-  rating: number;
-  imageUrl: string;
+  rating?: number;
+  imageUrl?: string;
 }
