@@ -9,6 +9,6 @@ public sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
         builder.HasIndex(u => u.ExternalId).IsUnique();
-        builder.Property(u => u.ExternalId).IsRequired();
+        builder.Property(u => u.ExternalId).IsRequired(false);
     }
 }

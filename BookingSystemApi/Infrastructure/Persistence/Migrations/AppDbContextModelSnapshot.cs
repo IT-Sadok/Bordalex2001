@@ -45,7 +45,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ExternalId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("HostId")
@@ -180,7 +179,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("ExternalId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")

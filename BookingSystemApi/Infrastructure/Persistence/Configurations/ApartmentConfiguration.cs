@@ -11,7 +11,7 @@ public sealed class ApartmentConfiguration : IEntityTypeConfiguration<Apartment>
     {
         builder.Property(a => a.PricePerNight).HasColumnType("decimal(18,2)");
         builder.HasIndex(a => a.ExternalId).IsUnique();
-        builder.Property(a => a.ExternalId).IsRequired();
+        builder.Property(a => a.ExternalId).IsRequired(false);
         builder.Property(a => a.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
         builder.HasOne<AppUser>().WithMany().HasForeignKey(a => a.HostId).OnDelete(DeleteBehavior.Restrict);
     }
