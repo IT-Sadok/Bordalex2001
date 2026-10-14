@@ -74,6 +74,37 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Apartments");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ApartmentImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ApartmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApartmentId")
+                        .IsUnique()
+                        .HasFilter("\"IsPrimary\" = TRUE");
+
+                    b.HasIndex("ApartmentId", "SortOrder");
+
+                    b.ToTable("ApartmentImages");
+                });
+
             modelBuilder.Entity("Domain.Entities.Booking", b =>
                 {
                     b.Property<Guid>("Id")
@@ -373,6 +404,17 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Entities.ApartmentImage", b =>
+                {
+                    b.HasOne("Domain.Entities.Apartment", "Apartment")
+                        .WithMany("Images")
+                        .HasForeignKey("ApartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Apartment");
+                });
+
             modelBuilder.Entity("Domain.Entities.Booking", b =>
                 {
                     b.HasOne("Domain.Entities.Apartment", null)
@@ -437,6 +479,11 @@ namespace Infrastructure.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Apartment", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

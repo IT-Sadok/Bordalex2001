@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Apartment> Apartments { get; set; }
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<ImportJob> ImportJobs { get; set; }
+    public DbSet<ApartmentImage> ApartmentImages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
