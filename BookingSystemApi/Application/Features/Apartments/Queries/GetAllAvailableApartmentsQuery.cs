@@ -1,11 +1,11 @@
 ﻿using Application.Common.Mediator.Interfaces;
-using Domain.Entities;
+using Application.Features.Apartments.DTOs;
 using Domain.Entities.Common;
 using Domain.Entities.Enums;
 
 namespace Application.Features.Apartments.Queries;
 
-public class GetAllAvailableApartmentsQuery : IRequest<PagedResult<Apartment>>
+public class GetAllAvailableApartmentsQuery : IRequest<PagedResult<ApartmentListItemDto>>
 {
     public SortDirection SortDirection { get; set; }
     public ApartmentSortBy SortBy { get; set; }

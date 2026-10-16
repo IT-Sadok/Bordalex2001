@@ -1,4 +1,5 @@
-﻿using Application.Features.Apartments.Interfaces;
+﻿using Application.Features.Apartments.DTOs;
+using Application.Features.Apartments.Interfaces;
 using Dapper;
 using Domain.Entities;
 using Domain.Entities.Common;
@@ -25,9 +26,9 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
         );
     }
 
-    public async Task<(IEnumerable<Apartment>, int)> GetPagedAsync(
-        int pageNumber = 1, 
-        int pageSize = 20, 
+    public async Task<(IEnumerable<ApartmentListItemDto>, int)> GetPagedAsync(
+        int pageNumber = 1,
+        int pageSize = 20,
         SortDirection sortDirection = SortDirection.Ascending,
         ApartmentSortBy sortBy = ApartmentSortBy.CreatedAt,
         CancellationToken ct = default)
@@ -36,7 +37,9 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
         if (pageSize < 1) pageSize = 20;
 
         var offset = (pageNumber - 1) * pageSize;
+
         var sortOrder = sortDirection == SortDirection.Ascending ? "ASC" : "DESC";
+
         var sortColumn = sortBy switch
         {
             ApartmentSortBy.PricePerNight => "PricePerNight",
@@ -44,20 +47,41 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
             ApartmentSortBy.Address => "Address",
             _ => "CreatedAt"
         };
-        var query = $@"SELECT * FROM ""Apartments""
-                       WHERE ""IsAvailable"" = TRUE
-                       ORDER BY ""{sortColumn}"" {sortOrder} 
-                       OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
 
-                       SELECT COUNT(*) FROM ""Apartments"" WHERE ""IsAvailable"" = TRUE;";
+        var query = $@"
+            SELECT
+                a.""Id"",
+                a.""Title"",
+                a.""Address"",
+                a.""PricePerNight"",
+                ai.""ImageUrl"" AS ""PrimaryImageUrl""
+            FROM ""Apartments"" AS a
+            LEFT JOIN ""ApartmentImages"" AS ai
+                ON ai.""ApartmentId"" = a.""Id""
+                AND ai.""IsPrimary"" = TRUE
+            WHERE a.""IsAvailable"" = TRUE
+              AND a.""DeletedAt"" IS NULL
+            ORDER BY a.""{sortColumn}"" {sortOrder}, a.""Id"" ASC
+            LIMIT @PageSize OFFSET @Offset;
 
-        using var multiple = await dbConnection.QueryMultipleAsync(query, new
-        {
-            Offset = offset,
-            PageSize = pageSize,
-        });
+            SELECT COUNT(*)
+            FROM ""Apartments"" AS a
+            WHERE a.""IsAvailable"" = TRUE
+              AND a.""DeletedAt"" IS NULL;";
 
-        var items = await multiple.ReadAsync<Apartment>();
+        var command = new CommandDefinition(
+            query,
+            new
+            {
+                Offset = offset,
+                PageSize = pageSize
+            },
+            cancellationToken: ct
+        );
+
+        using var multiple = await dbConnection.QueryMultipleAsync(command);
+
+        var items = await multiple.ReadAsync<ApartmentListItemDto>();
         var totalCount = await multiple.ReadSingleOrDefaultAsync<int>();
 
         return (items, totalCount);

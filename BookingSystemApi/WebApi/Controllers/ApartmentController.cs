@@ -1,6 +1,6 @@
 ﻿using Application.Common.Mediator.Interfaces;
+using Application.Features.Apartments.DTOs;
 using Application.Features.Apartments.Queries;
-using Domain.Entities;
 using Domain.Entities.Common;
 using Domain.Entities.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +32,7 @@ public class ApartmentController(IRequestExecutor request) : ControllerBase
             SortBy = sortByEnum
         };
 
-        var result = await request.ExecuteAsync<GetAllAvailableApartmentsQuery, PagedResult<Apartment>>(query);
+        var result = await request.ExecuteAsync<GetAllAvailableApartmentsQuery, PagedResult<ApartmentListItemDto>>(query);
 
         return Ok(result);
     }

@@ -1,14 +1,14 @@
 ﻿using Application.Common.Mediator.Interfaces;
+using Application.Features.Apartments.DTOs;
 using Application.Features.Apartments.Interfaces;
 using Application.Features.Apartments.Queries;
-using Domain.Entities;
 using Domain.Entities.Common;
 
 namespace Infrastructure.Features.Apartments.Handlers;
 
-public class GetAllAvailableApartmentsHandler(IApartmentRepository apartmentRepository) : IRequestHandler<GetAllAvailableApartmentsQuery, PagedResult<Apartment>>
+public class GetAllAvailableApartmentsHandler(IApartmentRepository apartmentRepository) : IRequestHandler<GetAllAvailableApartmentsQuery, PagedResult<ApartmentListItemDto>>
 {
-    public async Task<PagedResult<Apartment>> HandleAsync(GetAllAvailableApartmentsQuery request, CancellationToken ct = default)
+    public async Task<PagedResult<ApartmentListItemDto>> HandleAsync(GetAllAvailableApartmentsQuery request, CancellationToken ct = default)
     {
         var (apartments, totalCount) = await apartmentRepository.GetPagedAsync(
             request.PageNumber,
@@ -18,7 +18,7 @@ public class GetAllAvailableApartmentsHandler(IApartmentRepository apartmentRepo
             ct
         );
 
-        return new PagedResult<Apartment>(
+        return new PagedResult<ApartmentListItemDto>(
             apartments,
             totalCount,
             request.PageNumber,

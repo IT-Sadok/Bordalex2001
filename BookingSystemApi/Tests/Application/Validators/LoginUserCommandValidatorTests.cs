@@ -1,7 +1,7 @@
 ﻿using Application.Features.Users.Commands;
 using Application.Features.Users.Commands.Validators;
 
-namespace Tests.Application.Validation;
+namespace Tests.Application.Validators;
 
 public class LoginUserCommandValidatorTests
 {
