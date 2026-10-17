@@ -4,5 +4,5 @@ export default interface ApartmentCardProps {
   location: string;
   pricePerNight: number;
   rating?: number;
-  imageUrl?: string;
+  imageUrl?: string | null;
 }

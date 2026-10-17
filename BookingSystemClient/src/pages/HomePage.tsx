@@ -3,13 +3,17 @@ import ApartmentGrid from "../components/Apartments/ApartmentGrid/ApartmentGrid"
 import { getAllAvailableApartmentsAsync } from "../services/apartmentService";
 import type Apartment from "../types/Apartment";
 import type ApartmentCardProps from "../components/Apartments/ApartmentCard/ApartmentCardProps";
+import getImageUrl from "../utils/getImageUrl";
+import type PagedResult from "../types/PagedResult";
 
-const mapApartmentToCard = (apartment: Apartment): ApartmentCardProps => ({
-  id: apartment.id,
-  title: apartment.title,
-  location: apartment.address,
-  pricePerNight: apartment.pricePerNight,
-});
+const apartmentCards = (response: PagedResult<Apartment>) =>
+  response.items.map((apartment) => ({
+    id: apartment.id,
+    title: apartment.title,
+    location: apartment.address,
+    pricePerNight: apartment.pricePerNight,
+    imageUrl: getImageUrl(apartment.primaryImageUrl),
+  }));
 
 export default function HomePage() {
   const [apartments, setApartments] = useState<ApartmentCardProps[]>([]);
@@ -17,10 +21,13 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
 
   const loadApartmentsAsync = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
     try {
       const result = await getAllAvailableApartmentsAsync(1, 8);
 
-      setApartments(result.items.map(mapApartmentToCard));
+      setApartments(apartmentCards(result));
     } catch (error) {
       console.error("Error loading apartments:", error);
       setError("Failed to load apartments. Please try again later.");

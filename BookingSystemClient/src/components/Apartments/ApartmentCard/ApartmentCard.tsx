@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type ApartmentCardProps from "./ApartmentCardProps";
 
 export default function ApartmentCard({
@@ -7,14 +8,22 @@ export default function ApartmentCard({
   rating,
   imageUrl,
 }: ApartmentCardProps) {
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [imageUrl]);
+
   return (
     <article className="group cursor-pointer">
       {/*Apartment image */}
       <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-100">
-        {imageUrl ? (
+        {imageUrl && !imageError ? (
           <img
             src={imageUrl}
             alt={title}
+            loading="lazy"
+            onError={() => setImageError(true)}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
@@ -59,7 +68,7 @@ export default function ApartmentCard({
                   clipRule="evenodd"
                 />
               </svg>
-              {rating}
+              {rating.toFixed(1)}
             </span>
           )}
         </div>
@@ -67,7 +76,8 @@ export default function ApartmentCard({
         <p className="truncate text-sm text-gray-500">{location}</p>
 
         <p className="mt-2 text-sm">
-          <span className="font-semibold">${pricePerNight}</span> night
+          <span className="font-semibold">${pricePerNight}</span>
+          <span className="text-gray-500"> / night</span>
         </p>
       </div>
     </article>

@@ -6,6 +6,7 @@ export default interface Apartment {
     description: string;
     address: string;
     pricePerNight: number;
+    primaryImageUrl: string | null;
     isAvailable: boolean;
     createdAt: string;
     updatedAt: string | null;
