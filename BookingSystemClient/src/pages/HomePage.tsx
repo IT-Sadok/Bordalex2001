@@ -19,22 +19,30 @@ export default function HomePage() {
   const [apartments, setApartments] = useState<ApartmentCardProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const pageSize = 4;
 
   const loadApartmentsAsync = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const result = await getAllAvailableApartmentsAsync(1, 8);
+      const result = await getAllAvailableApartmentsAsync(
+        currentPage,
+        pageSize,
+      );
 
       setApartments(apartmentCards(result));
+      setTotalPages(result.totalPages);
     } catch (error) {
       console.error("Error loading apartments:", error);
       setError("Failed to load apartments. Please try again later.");
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
     void loadApartmentsAsync();
@@ -75,6 +83,32 @@ export default function HomePage() {
             error={error}
             onRetry={() => void loadApartmentsAsync()}
           />
+
+          {!isLoading && !error && totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-4">
+              <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((page) => page - 1)}
+                className="rounded-lg border px-4 py-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+
+              <button
+                type="button"
+                disabled={currentPage >= totalPages}
+                onClick={() => setCurrentPage((page) => page + 1)}
+                className="rounded-lg border px-4 py-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </section>
       </div>
     </>
