@@ -5,6 +5,7 @@ import type Apartment from "../types/Apartment";
 import type ApartmentCardProps from "../components/Apartments/ApartmentCard/ApartmentCardProps";
 import getImageUrl from "../utils/getImageUrl";
 import type PagedResult from "../types/PagedResult";
+import Pagination from "../components/Apartments/Pagination/Pagination";
 
 const apartmentCards = (response: PagedResult<Apartment>) =>
   response.items.map((apartment) => ({
@@ -84,30 +85,12 @@ export default function HomePage() {
             onRetry={() => void loadApartmentsAsync()}
           />
 
-          {!isLoading && !error && totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-4">
-              <button
-                type="button"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((page) => page - 1)}
-                className="rounded-lg border px-4 py-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Previous
-              </button>
-
-              <span>
-                Page {currentPage} of {totalPages}
-              </span>
-
-              <button
-                type="button"
-                disabled={currentPage >= totalPages}
-                onClick={() => setCurrentPage((page) => page + 1)}
-                className="rounded-lg border px-4 py-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Next
-              </button>
-            </div>
+          {!isLoading && !error && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           )}
         </section>
       </div>
