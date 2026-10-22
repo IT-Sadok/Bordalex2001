@@ -22,31 +22,50 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [retryCount, setRetryCount] = useState(0);
 
   const pageSize = 4;
 
-  const loadApartmentsAsync = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+  const loadApartmentsAsync = useCallback(
+    async (signal?: AbortSignal) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const result = await getAllAvailableApartmentsAsync(
-        currentPage,
-        pageSize,
-      );
+      try {
+        const result = await getAllAvailableApartmentsAsync(
+          currentPage,
+          pageSize,
+          "asc",
+          "date",
+          signal,
+        );
 
-      setApartments(apartmentCards(result));
-      setTotalPages(result.totalPages);
-    } catch (error) {
-      console.error("Error loading apartments:", error);
-      setError("Failed to load apartments. Please try again later.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentPage]);
+        if (signal?.aborted) return;
+
+        setApartments(apartmentCards(result));
+        setTotalPages(result.totalPages);
+      } catch (error) {
+        if (signal?.aborted) return;
+
+        console.error("Error loading apartments:", error);
+        setError("Failed to load apartments. Please try again later.");
+      } finally {
+        if (!signal?.aborted) {
+          setIsLoading(false);
+        }
+      }
+    },
+    [currentPage, retryCount],
+  );
 
   useEffect(() => {
-    void loadApartmentsAsync();
+    const controller = new AbortController();
+
+    void loadApartmentsAsync(controller.signal);
+
+    return () => {
+      controller.abort();
+    };
   }, [loadApartmentsAsync]);
 
   return (
@@ -82,7 +101,7 @@ export default function HomePage() {
             apartments={apartments}
             isLoading={isLoading}
             error={error}
-            onRetry={() => void loadApartmentsAsync()}
+            onRetry={() => setRetryCount((count) => count + 1)}
           />
 
           {!isLoading && !error && (

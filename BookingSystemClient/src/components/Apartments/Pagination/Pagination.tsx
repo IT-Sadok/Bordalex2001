@@ -46,84 +46,82 @@ export default function Pagination({
   const visiblePages = getVisiblePages(currentPage, totalPages);
 
   return (
-    <>
-      <nav
-        aria-label="Apartment pagination"
-        className="mt-8 flex items-center justify-center gap-4"
+    <nav
+      aria-label="Apartment pagination"
+      className="mt-8 flex items-center justify-center gap-4"
+    >
+      <button
+        type="button"
+        disabled={currentPage <= 1}
+        onClick={() => onPageChange(currentPage - 1)}
+        aria-label="Previous page"
+        className="flex min-w-7 shrink-0 items-center justify-center gap-1 rounded-4xl border px-2 py-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed sm:min-w-28 sm:px-4"
       >
-        <button
-          type="button"
-          disabled={currentPage <= 1}
-          onClick={() => onPageChange(currentPage - 1)}
-          aria-label="Previous page"
-          className="flex items-center justify-between rounded-4xl border px-4 py-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className="size-5"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className="size-5"
-          >
-            <path
-              fillRule="evenodd"
-              d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Previous
-        </button>
+          <path
+            fillRule="evenodd"
+            d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+            clipRule="evenodd"
+          />
+        </svg>
+        <span className="hidden sm:inline">Previous</span>
+      </button>
 
-        <div className="hidden items-center gap-2 sm:flex">
-          {visiblePages.map((page, index) =>
-            typeof page === "number" ? (
-              <button
-                key={page}
-                type="button"
-                onClick={() => onPageChange(page)}
-                aria-label={`Go to page ${page}`}
-                aria-current={currentPage === page ? "page" : undefined}
-                className={`rounded-4xl border px-4 py-2 transition-colors ${
-                  currentPage === page
-                    ? "border-gray-900 bg-gray-900 text-white"
-                    : "border-gray-300 hover:bg-gray-100"
-                }`}
-              >
-                {page}
-              </button>
-            ) : (
-              <span key={`ellipsis-${index}`} className="px-1">
-                ...
-              </span>
-            ),
-          )}
-        </div>
+      <div className="hidden items-center gap-2 sm:flex">
+        {visiblePages.map((page, index) =>
+          typeof page === "number" ? (
+            <button
+              key={page}
+              type="button"
+              onClick={() => onPageChange(page)}
+              aria-label={`Go to page ${page}`}
+              aria-current={currentPage === page ? "page" : undefined}
+              className={`rounded-4xl border px-4 py-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 ${
+                currentPage === page
+                  ? "border-gray-900 bg-gray-900 text-white"
+                  : "border-gray-300 hover:bg-gray-100"
+              }`}
+            >
+              {page}
+            </button>
+          ) : (
+            <span key={`ellipsis-${index}`} className="px-1">
+              ...
+            </span>
+          ),
+        )}
+      </div>
 
-        <span className="text-sm text-gray-600 sm:hidden">
-          Page {currentPage} of {totalPages}
-        </span>
+      <span className="text-sm text-gray-600 sm:hidden">
+        Page {currentPage} of {totalPages}
+      </span>
 
-        <button
-          type="button"
-          disabled={currentPage >= totalPages}
-          onClick={() => onPageChange(currentPage + 1)}
-          aria-label="Next page"
-          className="flex items-center justify-between rounded-4xl border px-4 py-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+      <button
+        type="button"
+        disabled={currentPage >= totalPages}
+        onClick={() => onPageChange(currentPage + 1)}
+        aria-label="Next page"
+        className="flex min-w-7 shrink-0 items-center justify-center gap-1 rounded-4xl border px-2 py-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed sm:min-w-28 sm:px-4"
+      >
+        <span className="hidden sm:inline">Next</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className="size-5"
         >
-          Next
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className="size-5"
-          >
-            <path
-              fillRule="evenodd"
-              d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-      </nav>
-    </>
+          <path
+            fillRule="evenodd"
+            d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+    </nav>
   );
 }

@@ -7,6 +7,7 @@ export const getAllAvailableApartmentsAsync = async (
   size: number,
   sort: string = "asc",
   sortBy: string = "date",
+  signal?: AbortSignal
 ): Promise<PagedResult<Apartment>> => {
   const response = await apiClient.get<PagedResult<Apartment>>(
     "/api/apartments/available",
@@ -17,6 +18,7 @@ export const getAllAvailableApartmentsAsync = async (
         sort,
         sortBy,
       },
+      signal
     },
   );
 
