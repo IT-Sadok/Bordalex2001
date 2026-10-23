@@ -6,6 +6,8 @@ import type ApartmentCardProps from "../components/Apartments/ApartmentCard/Apar
 import getImageUrl from "../utils/getImageUrl";
 import type PagedResult from "../types/PagedResult";
 import Pagination from "../components/Apartments/Pagination/Pagination";
+import type ApartmentSortOption from "../types/ApartmentSortOption";
+import ApartmentSort from "../components/Apartments/ApartmentSort/ApartmentSort";
 
 const apartmentCards = (response: PagedResult<Apartment>) =>
   response.items.map((apartment) => ({
@@ -23,8 +25,14 @@ export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [retryCount, setRetryCount] = useState(0);
+  const [sortOption, setSortOption] = useState<ApartmentSortOption>("newest");
 
   const pageSize = 4;
+
+  const sortBy = sortOption.startsWith("price") ? "price" : "date";
+
+  const sort =
+    sortOption === "newest" || sortOption === "price-desc" ? "desc" : "asc";
 
   const loadApartmentsAsync = useCallback(
     async (signal?: AbortSignal) => {
@@ -35,8 +43,8 @@ export default function HomePage() {
         const result = await getAllAvailableApartmentsAsync(
           currentPage,
           pageSize,
-          "asc",
-          "date",
+          sort,
+          sortBy,
           signal,
         );
 
@@ -55,7 +63,7 @@ export default function HomePage() {
         }
       }
     },
-    [currentPage, retryCount],
+    [currentPage, retryCount, sort, sortBy],
   );
 
   useEffect(() => {
@@ -72,13 +80,21 @@ export default function HomePage() {
     <>
       <div className="mx-auto w-full px-4 py-8 sm:px-6 lg:px-8">
         <section>
-          <div className="mb-6 flex items-end justify-between gap-4">
+          <div className="mb-6 flex items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-semibold">Explore apartments</h1>
               <p className="mt-1 text-sm text-gray-500">
                 Find a place for your next stay
               </p>
             </div>
+
+            <ApartmentSort
+              value={sortOption}
+              onChange={(value) => {
+                setCurrentPage(1);
+                setSortOption(value);
+              }}
+            />
 
             <button
               type="button"

@@ -52,7 +52,7 @@ export default function DestinationPicker({
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Choose or enter a destination"
               className="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:border-gray-500"
             />
