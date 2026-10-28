@@ -3,6 +3,15 @@ import DatePicker from "./DatePicker/DatePicker";
 import DestinationPicker from "./DestinationPicker/DestinationPicker";
 import GuestPicker from "./GuestPicker/GuestPicker";
 import type SearchErrors from "./SearchErrors";
+import { useNavigate } from "react-router";
+
+function formatLocalDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 
 export default function SearchBar() {
   const [destination, setDestination] = useState("");
@@ -30,7 +39,7 @@ export default function SearchBar() {
     if (value) {
       clearErrors("destination");
     }
-  }
+  };
 
   const handleCheckInChange = (date: Date | null) => {
     setCheckIn(date);
@@ -38,7 +47,7 @@ export default function SearchBar() {
     if (date && checkOut && checkOut > date) {
       clearErrors("dates");
     }
-  }
+  };
 
   const handleCheckOutChange = (date: Date | null) => {
     setCheckOut(date);
@@ -46,13 +55,15 @@ export default function SearchBar() {
     if (checkIn && date && date > checkIn) {
       clearErrors("dates");
     }
-  }
+  };
 
   const handleAdultsChange = (value: number) => {
     if (value >= 1) {
       clearErrors("guests");
     }
-  }
+  };
+
+  const navigate = useNavigate();
 
   const handleSearch = () => {
     const errors: SearchErrors = {};
@@ -79,6 +90,10 @@ export default function SearchBar() {
       return;
     }
 
+    if (!checkIn || !checkOut) {
+      return;
+    }
+
     const searchData = {
       destination,
       dates: { checkIn, checkOut },
@@ -90,12 +105,29 @@ export default function SearchBar() {
       },
     };
 
-    console.log(searchData);
+    const params = new URLSearchParams({
+      destination: searchData.destination.trim(),
+      checkIn: formatLocalDate(searchData.dates.checkIn),
+      checkOut: formatLocalDate(searchData.dates.checkOut),
+      adults: String(searchData.guests.adults),
+      children: String(searchData.guests.children),
+      infants: String(searchData.guests.infants),
+      pets: String(searchData.guests.pets),
+    });
+
+    navigate(`/?${params.toString()}`);
   };
 
   return (
     <>
-      <form role="search" className="mx-auto w-full h-full max-w-md md:max-w-lg lg:max-w-xl">
+      <form
+        role="search"
+        onSubmit={(event) => {
+          event.preventDefault();
+          handleSearch();
+        }}
+        className="mx-auto w-full h-full max-w-md md:max-w-lg lg:max-w-xl"
+      >
         <div className="flex h-16 w-full items-stretch gap-1 px-2 py-2 border border-gray-300 rounded-3xl shadow-sm hover:shadow-lg transition-all">
           {/* Search options */}
           <div className="flex h-full min-w-0 flex-1 items-center">
@@ -129,8 +161,7 @@ export default function SearchBar() {
 
           {/* Search button*/}
           <button
-            type="button"
-            onClick={handleSearch}
+            type="submit"
             className="flex h-8 w-8 shrink-0 items-center justify-center self-center bg-red-500 hover:bg-red-600 rounded-2xl transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-300"
             aria-label="Search"
           >
