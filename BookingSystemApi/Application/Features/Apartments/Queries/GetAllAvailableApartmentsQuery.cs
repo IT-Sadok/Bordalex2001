@@ -11,4 +11,5 @@ public class GetAllAvailableApartmentsQuery : IRequest<PagedResult<ApartmentList
     public ApartmentSortBy SortBy { get; set; }
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
+    public string? Destination { get; set; }
 }

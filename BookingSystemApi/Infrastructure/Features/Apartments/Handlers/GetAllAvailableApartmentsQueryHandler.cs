@@ -6,7 +6,7 @@ using Domain.Entities.Common;
 
 namespace Infrastructure.Features.Apartments.Handlers;
 
-public class GetAllAvailableApartmentsHandler(IApartmentRepository apartmentRepository) : IRequestHandler<GetAllAvailableApartmentsQuery, PagedResult<ApartmentListItemDto>>
+public class GetAllAvailableApartmentsQueryHandler(IApartmentRepository apartmentRepository) : IRequestHandler<GetAllAvailableApartmentsQuery, PagedResult<ApartmentListItemDto>>
 {
     public async Task<PagedResult<ApartmentListItemDto>> HandleAsync(GetAllAvailableApartmentsQuery request, CancellationToken ct = default)
     {
@@ -15,6 +15,7 @@ public class GetAllAvailableApartmentsHandler(IApartmentRepository apartmentRepo
             request.PageSize,
             request.SortDirection,
             request.SortBy,
+            request.Destination,
             ct
         );
 

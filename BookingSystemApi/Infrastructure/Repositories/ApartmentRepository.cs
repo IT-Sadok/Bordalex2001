@@ -31,6 +31,7 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
         int pageSize = 20,
         SortDirection sortDirection = SortDirection.Ascending,
         ApartmentSortBy sortBy = ApartmentSortBy.CreatedAt,
+        string? destination = null,
         CancellationToken ct = default)
     {
         if (pageNumber < 1) pageNumber = 1;
@@ -48,6 +49,8 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
             _ => "CreatedAt"
         };
 
+        destination = string.IsNullOrWhiteSpace(destination) ? null : destination.Trim();
+
         var query = $@"
             SELECT
                 a.""Id"",
@@ -61,21 +64,31 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
                 AND ai.""IsPrimary"" = TRUE
             WHERE a.""IsAvailable"" = TRUE
               AND a.""DeletedAt"" IS NULL
+              AND (
+                  @Destination IS NULL
+                  OR a.""Address"" ILIKE '%' || @Destination || '%'
+              )
             ORDER BY a.""{sortColumn}"" {sortOrder}, a.""Id"" ASC
             LIMIT @PageSize OFFSET @Offset;
 
             SELECT COUNT(*)
             FROM ""Apartments"" AS a
             WHERE a.""IsAvailable"" = TRUE
-              AND a.""DeletedAt"" IS NULL;";
+              AND a.""DeletedAt"" IS NULL
+              AND (
+                  @Destination IS NULL
+                  OR a.""Address"" ILIKE '%' || @Destination || '%'
+              );";
+
+        var parameters = new DynamicParameters();
+
+        parameters.Add("Offset", offset);
+        parameters.Add("PageSize", pageSize);
+        parameters.Add("Destination", destination, DbType.String);
 
         var command = new CommandDefinition(
             query,
-            new
-            {
-                Offset = offset,
-                PageSize = pageSize
-            },
+            parameters,
             cancellationToken: ct
         );
 
