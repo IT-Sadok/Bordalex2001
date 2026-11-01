@@ -32,6 +32,8 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
         SortDirection sortDirection = SortDirection.Ascending,
         ApartmentSortBy sortBy = ApartmentSortBy.CreatedAt,
         string? destination = null,
+        DateOnly? checkIn = null,
+        DateOnly? checkOut = null,
         CancellationToken ct = default)
     {
         if (pageNumber < 1) pageNumber = 1;
@@ -68,6 +70,17 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
                   @Destination IS NULL
                   OR a.""Address"" ILIKE '%' || @Destination || '%'
               )
+              AND (
+                  @CheckIn IS NULL
+                  OR @CheckOut IS NULL
+                  OR NOT EXISTS (
+                      SELECT 1
+                      FROM ""Bookings"" AS b
+                      WHERE b.""ApartmentId"" = a.""Id""
+                        AND b.""StartDate"" < @CheckOut
+                        AND b.""EndDate"" > @CheckIn
+                  )
+              )
             ORDER BY a.""{sortColumn}"" {sortOrder}, a.""Id"" ASC
             LIMIT @PageSize OFFSET @Offset;
 
@@ -78,6 +91,17 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
               AND (
                   @Destination IS NULL
                   OR a.""Address"" ILIKE '%' || @Destination || '%'
+              )
+              AND (
+                  @CheckIn IS NULL
+                  OR @CheckOut IS NULL
+                  OR NOT EXISTS (
+                      SELECT 1
+                      FROM ""Bookings"" AS b
+                      WHERE b.""ApartmentId"" = a.""Id""
+                        AND b.""StartDate"" < @CheckOut
+                        AND b.""EndDate"" > @CheckIn
+                  )
               );";
 
         var parameters = new DynamicParameters();
@@ -85,6 +109,8 @@ public class ApartmentRepository(IDbConnection dbConnection) : IApartmentReposit
         parameters.Add("Offset", offset);
         parameters.Add("PageSize", pageSize);
         parameters.Add("Destination", destination, DbType.String);
+        parameters.Add("CheckIn", checkIn, DbType.Date);
+        parameters.Add("CheckOut", checkOut, DbType.Date);
 
         var command = new CommandDefinition(
             query,

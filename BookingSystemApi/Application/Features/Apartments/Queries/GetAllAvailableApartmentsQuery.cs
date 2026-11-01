@@ -12,4 +12,6 @@ public class GetAllAvailableApartmentsQuery : IRequest<PagedResult<ApartmentList
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
     public string? Destination { get; set; }
+    public DateOnly? CheckIn { get; set; }
+    public DateOnly? CheckOut { get; set; }
 }

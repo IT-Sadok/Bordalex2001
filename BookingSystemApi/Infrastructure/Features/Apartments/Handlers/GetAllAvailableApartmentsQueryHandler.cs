@@ -16,6 +16,8 @@ public class GetAllAvailableApartmentsQueryHandler(IApartmentRepository apartmen
             request.SortDirection,
             request.SortBy,
             request.Destination,
+            request.CheckIn,
+            request.CheckOut,
             ct
         );
 

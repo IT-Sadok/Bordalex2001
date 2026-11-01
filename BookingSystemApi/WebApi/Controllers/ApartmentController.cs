@@ -12,7 +12,14 @@ namespace WebApi.Controllers;
 public class ApartmentController(IRequestExecutor request) : ControllerBase
 {
     [HttpGet("available")]
-    public async Task<IActionResult> GetAllAvailableApartmentsAsync([FromQuery] int page, [FromQuery] int size, [FromQuery] string? sort = "asc", [FromQuery] string? sortBy = "date", [FromQuery] string? destination = null)
+    public async Task<IActionResult> GetAllAvailableApartmentsAsync(
+        [FromQuery] int page,
+        [FromQuery] int size,
+        [FromQuery] string? sort = "asc",
+        [FromQuery] string? sortBy = "date",
+        [FromQuery] string? destination = null,
+        [FromQuery] DateOnly? checkIn = null,
+        [FromQuery] DateOnly? checkOut = null)
     {
         var sortDirection = sort?.ToLower() == "desc" ? SortDirection.Descending : SortDirection.Ascending;
 
@@ -30,7 +37,9 @@ public class ApartmentController(IRequestExecutor request) : ControllerBase
             PageSize = size,
             SortDirection = sortDirection,
             SortBy = sortByEnum,
-            Destination = destination
+            Destination = destination,
+            CheckIn = checkIn,
+            CheckOut = checkOut
         };
 
         var result = await request.ExecuteAsync<GetAllAvailableApartmentsQuery, PagedResult<ApartmentListItemDto>>(query);
