@@ -43,10 +43,12 @@ export default function HomePage() {
 
       try {
         const result = await getAllAvailableApartmentsAsync(
-          currentPage,
-          pageSize,
-          sort,
-          sortBy,
+          {
+            page: currentPage,
+            size: pageSize,
+            sort,
+            sortBy,
+          },
           signal,
         );
 
