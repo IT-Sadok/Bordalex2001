@@ -36,6 +36,15 @@ export default function HomePage() {
   const sort =
     sortOption === "newest" || sortOption === "price-desc" ? "desc" : "asc";
 
+  const [searchParams] = useSearchParams();
+
+  const search = searchParams.toString();
+
+  const apartmentSearchParams = useMemo(
+    () => parseApartmentSearchParams(new URLSearchParams(search)),
+    [search],
+  );
+
   const loadApartmentsAsync = useCallback(
     async (signal?: AbortSignal) => {
       setIsLoading(true);
@@ -48,6 +57,7 @@ export default function HomePage() {
             size: pageSize,
             sort,
             sortBy,
+            destination: apartmentSearchParams?.destination || undefined,
           },
           signal,
         );
@@ -67,7 +77,7 @@ export default function HomePage() {
         }
       }
     },
-    [currentPage, retryCount, sort, sortBy],
+    [currentPage, retryCount, sort, sortBy, apartmentSearchParams?.destination],
   );
 
   useEffect(() => {
@@ -79,19 +89,6 @@ export default function HomePage() {
       controller.abort();
     };
   }, [loadApartmentsAsync]);
-
-  const [searchParams] = useSearchParams();
-
-  const search = searchParams.toString();
-
-  const apartmentSearchParams = useMemo(
-    () => parseApartmentSearchParams(new URLSearchParams(search)),
-    [search],
-  );
-
-  useEffect(() => {
-    console.log("Apartment search params:", apartmentSearchParams);
-  }, [apartmentSearchParams]);
 
   return (
     <>

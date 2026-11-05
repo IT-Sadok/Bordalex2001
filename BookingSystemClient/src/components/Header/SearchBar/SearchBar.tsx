@@ -2,7 +2,6 @@ import { useState } from "react";
 import DatePicker from "./DatePicker/DatePicker";
 import DestinationPicker from "./DestinationPicker/DestinationPicker";
 import GuestPicker from "./GuestPicker/GuestPicker";
-import type SearchErrors from "./SearchErrors";
 import { useNavigate } from "react-router";
 
 function formatLocalDate(date: Date): string {
@@ -24,98 +23,40 @@ export default function SearchBar() {
   const [infants, setInfants] = useState(0);
   const [pets, setPets] = useState(0);
 
-  const [errors, setErrors] = useState<SearchErrors>({});
-
-  const clearErrors = (field: keyof SearchErrors) => {
-    setErrors((prev) => ({
-      ...prev,
-      [field]: undefined,
-    }));
-  };
-
-  const handleDestinationChange = (value: string) => {
-    setDestination(value);
-
-    if (value) {
-      clearErrors("destination");
-    }
-  };
-
-  const handleCheckInChange = (date: Date | null) => {
-    setCheckIn(date);
-
-    if (date && checkOut && checkOut > date) {
-      clearErrors("dates");
-    }
-  };
-
-  const handleCheckOutChange = (date: Date | null) => {
-    setCheckOut(date);
-
-    if (checkIn && date && date > checkIn) {
-      clearErrors("dates");
-    }
-  };
-
-  const handleAdultsChange = (value: number) => {
-    if (value >= 1) {
-      clearErrors("guests");
-    }
-  };
-
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    const errors: SearchErrors = {};
+    const params = new URLSearchParams();
 
-    if (!destination) {
-      errors.destination = "Please select a destination";
+    if (destination.trim()) {
+      params.set("destination", destination.trim());
     }
 
-    if (!checkIn) {
-      errors.dates = "Please select a check-in date";
-    } else if (!checkOut) {
-      errors.dates = "Please select a check-out date";
-    } else if (checkOut <= checkIn) {
-      errors.dates = "Check-out date must be after check-in date";
+    if (checkIn) {
+      params.set("checkIn", formatLocalDate(checkIn));
     }
 
-    if (adults < 1) {
-      errors.guests = "Please select at least one adult";
+    if (checkOut) {
+      params.set("checkOut", formatLocalDate(checkOut));
     }
 
-    setErrors(errors);
-
-    if (Object.keys(errors).length > 0) {
-      return;
+    if (adults > 0) {
+      params.set("adults", String(adults));
     }
 
-    if (!checkIn || !checkOut) {
-      return;
+    if (children > 0) {
+      params.set("children", String(children));
     }
 
-    const searchData = {
-      destination,
-      dates: { checkIn, checkOut },
-      guests: {
-        adults,
-        children,
-        infants,
-        pets,
-      },
-    };
+    if (infants > 0) {
+      params.set("infants", String(infants));
+    }
 
-    const params = new URLSearchParams({
-      destination: searchData.destination.trim(),
-      checkIn: formatLocalDate(searchData.dates.checkIn),
-      checkOut: formatLocalDate(searchData.dates.checkOut),
-      adults: String(searchData.guests.adults),
-      children: String(searchData.guests.children),
-      infants: String(searchData.guests.infants),
-      pets: String(searchData.guests.pets),
-    });
+    if (pets > 0) {
+      params.set("pets", String(pets));
+    }
 
-    navigate(`/?${params.toString()}`);
+    navigate({ pathname: "/", search: params.toString() });
   };
 
   return (
@@ -133,16 +74,14 @@ export default function SearchBar() {
           <div className="flex h-full min-w-0 flex-1 items-center">
             <DestinationPicker
               destination={destination}
-              setDestination={handleDestinationChange}
-              error={errors.destination}
+              setDestination={setDestination}
             />
             <span className="border-l border-gray-300 h-6" />
             <DatePicker
               checkIn={checkIn}
               checkOut={checkOut}
-              setCheckIn={handleCheckInChange}
-              setCheckOut={handleCheckOutChange}
-              error={errors.dates}
+              setCheckIn={setCheckIn}
+              setCheckOut={setCheckOut}
             />
             <span className="border-l border-gray-300 h-6" />
             <GuestPicker
@@ -154,8 +93,6 @@ export default function SearchBar() {
               setChildren={setChildren}
               setInfants={setInfants}
               setPets={setPets}
-              onAdultsChange={handleAdultsChange}
-              error={errors.guests}
             />
           </div>
 
