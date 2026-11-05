@@ -1,8 +1,8 @@
 export default interface ApartmentSearchParams {
   destination: string;
   dates: {
-    checkIn: Date;
-    checkOut: Date;
+    checkIn: Date | null;
+    checkOut: Date | null;
   };
   guests: {
     adults: number;

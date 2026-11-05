@@ -57,7 +57,7 @@ export default function HomePage() {
             size: pageSize,
             sort,
             sortBy,
-            destination: apartmentSearchParams?.destination || undefined,
+            destination: apartmentSearchParams.destination || undefined,
           },
           signal,
         );
@@ -77,7 +77,7 @@ export default function HomePage() {
         }
       }
     },
-    [currentPage, retryCount, sort, sortBy, apartmentSearchParams?.destination],
+    [currentPage, retryCount, sort, sortBy, apartmentSearchParams.destination],
   );
 
   useEffect(() => {

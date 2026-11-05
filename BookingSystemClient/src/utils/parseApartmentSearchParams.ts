@@ -1,42 +1,57 @@
 import type ApartmentSearchParams from "../types/ApartmentSearchParams";
 
-export default function parseApartmentSearchParams(
-  params: URLSearchParams,
-): ApartmentSearchParams | null {
-  const destination = params.get("destination")?.trim();
-  const checkIn = params.get("checkIn");
-  const checkOut = params.get("checkOut");
-
-  const adults = Number(params.get("adults"));
-  const children = Number(params.get("children") ?? 0);
-  const infants = Number(params.get("infants") ?? 0);
-  const pets = Number(params.get("pets") ?? 0);
-
-  if (!destination || !checkIn || !checkOut) {
+function parseDate(value: string | null): Date | null {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return null;
   }
 
-  const checkInDate = new Date(`${checkIn}T00:00:00`);
-  const checkOutDate = new Date(`${checkOut}T00:00:00`);
+  const [year, month, day] = value.split("-").map(Number);
+
+  const date = new Date(year, month - 1, day);
 
   if (
-    !Number.isFinite(checkInDate.getTime()) ||
-    !Number.isFinite(checkOutDate.getTime()) ||
-    checkOutDate <= checkInDate ||
-    !Number.isInteger(adults) ||
-    adults < 1 ||
-    [children, infants, pets].some(
-      (value) => !Number.isInteger(value) || value < 0,
-    )
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
   ) {
     return null;
   }
 
+  return date;
+}
+
+function parseGuestCount(value: string | null): number {
+  if (value === null) {
+    return 0;
+  }
+
+  if (!/^\d+$/.test(value)) {
+    return 0;
+  }
+
+  const count = Number(value);
+
+  return Number.isSafeInteger(count) ? count : 0;
+}
+
+export default function parseApartmentSearchParams(
+  params: URLSearchParams,
+): ApartmentSearchParams {
+  const destination = params.get("destination")?.trim() ?? "";
+
+  const checkIn = parseDate(params.get("checkIn"));
+  const checkOut = parseDate(params.get("checkOut"));
+
+  const adults = parseGuestCount(params.get("adults"));
+  const children = parseGuestCount(params.get("children"));
+  const infants = parseGuestCount(params.get("infants"));
+  const pets = parseGuestCount(params.get("pets"));
+
   return {
     destination,
     dates: {
-      checkIn: checkInDate,
-      checkOut: checkOutDate,
+      checkIn,
+      checkOut,
     },
     guests: {
       adults,
