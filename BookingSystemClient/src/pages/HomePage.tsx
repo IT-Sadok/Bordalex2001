@@ -10,6 +10,7 @@ import type ApartmentSortOption from "../types/ApartmentSortOption";
 import ApartmentSort from "../components/Apartments/ApartmentSort/ApartmentSort";
 import { useSearchParams } from "react-router";
 import parseApartmentSearchParams from "../utils/parseApartmentSearchParams";
+import formatLocalDate from "../utils/formatLocalDate";
 
 const apartmentCards = (response: PagedResult<Apartment>) =>
   response.items.map((apartment) => ({
@@ -45,6 +46,16 @@ export default function HomePage() {
     [search],
   );
 
+  const { checkIn, checkOut } = apartmentSearchParams.dates;
+
+  const hasValidDateRange =
+    checkIn !== null && checkOut !== null && checkOut > checkIn;
+
+  const checkInParam = hasValidDateRange ? formatLocalDate(checkIn) : undefined;
+  const checkOutParam = hasValidDateRange
+    ? formatLocalDate(checkOut)
+    : undefined;
+
   const loadApartmentsAsync = useCallback(
     async (signal?: AbortSignal) => {
       setIsLoading(true);
@@ -58,6 +69,8 @@ export default function HomePage() {
             sort,
             sortBy,
             destination: apartmentSearchParams.destination || undefined,
+            checkIn: checkInParam,
+            checkOut: checkOutParam,
           },
           signal,
         );
@@ -77,7 +90,15 @@ export default function HomePage() {
         }
       }
     },
-    [currentPage, retryCount, sort, sortBy, apartmentSearchParams.destination],
+    [
+      currentPage,
+      retryCount,
+      sort,
+      sortBy,
+      apartmentSearchParams.destination,
+      checkInParam,
+      checkOutParam,
+    ],
   );
 
   useEffect(() => {
