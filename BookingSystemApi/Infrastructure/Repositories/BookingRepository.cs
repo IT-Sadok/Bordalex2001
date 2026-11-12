@@ -42,9 +42,9 @@ public class BookingRepository(IDbConnection dbConnection) : IBookingRepository
 
         return new PagedResult<Booking>(
             items,
-            pageNumber,
             totalCount,
-            totalPages
+            pageNumber,
+            pageSize
         );
     }
 
@@ -59,24 +59,29 @@ public class BookingRepository(IDbConnection dbConnection) : IBookingRepository
                 EndDate = endDate
             }
         );
-        
+
         var hasAny = count > 0;
         return hasAny;
     }
 
     public async Task CreateAsync(Booking booking, CancellationToken ct = default)
     {
+        var parameters = new
+        {
+            booking.Id,
+            booking.ApartmentId,
+            booking.ClientId,
+            StartDate = booking.StartDate.ToDateTime(TimeOnly.MinValue),
+            EndDate = booking.EndDate.ToDateTime(TimeOnly.MinValue),
+            booking.TotalPrice
+        };
+
         await dbConnection.ExecuteAsync(
-            "INSERT INTO \"Bookings\" (\"Id\", \"ApartmentId\", \"ClientId\", \"StartDate\", \"EndDate\", \"TotalPrice\") VALUES (@Id, @ApartmentId, @ClientId, @StartDate, @EndDate, @TotalPrice)",
-            new
-            {
-                booking.Id,
-                booking.ApartmentId,
-                booking.ClientId,
-                booking.StartDate,
-                booking.EndDate,
-                booking.TotalPrice
-            }
+            new CommandDefinition(
+                "INSERT INTO \"Bookings\" (\"Id\", \"ApartmentId\", \"ClientId\", \"StartDate\", \"EndDate\", \"TotalPrice\") VALUES (@Id, @ApartmentId, @ClientId, @StartDate, @EndDate, @TotalPrice)",
+                parameters,
+                cancellationToken: ct
+            )
         );
     }
 }

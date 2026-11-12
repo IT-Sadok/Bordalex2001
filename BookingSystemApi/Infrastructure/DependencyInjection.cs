@@ -16,6 +16,7 @@ using Infrastructure.Persistence.Seeders;
 using Infrastructure.Persistence.Seeders.Interfaces;
 using Infrastructure.Repositories;
 using Infrastructure.UserContext;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -51,8 +52,26 @@ public static class DependencyInjection
 
         var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
-        services.AddAuthentication("Bearer")
-            .AddJwtBearer("Bearer", options =>
+        services.AddIdentity<AppUser, IdentityRole>(options =>
+        {
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 8;
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddSignInManager()
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<AppDbContext>();
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -68,19 +87,6 @@ public static class DependencyInjection
             });
 
         services.AddAuthorization();
-
-        services.AddIdentity<AppUser, IdentityRole>(options =>
-        {
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireUppercase = true;
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequiredLength = 8;
-            options.User.RequireUniqueEmail = true;
-        })
-        .AddSignInManager()
-        .AddRoles<IdentityRole>()
-        .AddEntityFrameworkStores<AppDbContext>();
 
         var handlerInterfaceType = typeof(IRequestHandler<,>);
         var assembly = typeof(LoginUserHandler).Assembly;

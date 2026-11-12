@@ -3,6 +3,7 @@ using Application.Features.Bookings.Commands;
 using Application.Features.Bookings.Queries;
 using Domain.Entities;
 using Domain.Entities.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -11,6 +12,7 @@ namespace WebApi.Controllers;
 [ApiController]
 public class BookingController(IRequestExecutor request) : ControllerBase
 {
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateBookingAsync([FromBody] CreateBookingCommand command)
     {
@@ -22,7 +24,7 @@ public class BookingController(IRequestExecutor request) : ControllerBase
     public async Task<IActionResult> GetAllActiveBookingsAsync([FromQuery] int page, [FromQuery] int size, [FromQuery] string? sort = "asc")
     {
         var sortDirection = sort?.ToLower() == "desc" ? SortDirection.Descending : SortDirection.Ascending;
-        
+
         var query = new GetAllActiveBookingsQuery
         {
             PageNumber = page,
