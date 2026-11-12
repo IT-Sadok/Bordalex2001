@@ -1,4 +1,5 @@
-﻿using Application.Common.Mediator.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Mediator.Interfaces;
 using Application.Features.Apartments.Interfaces;
 using Application.Features.Bookings.Commands;
 using Application.Features.Bookings.Interfaces;
@@ -24,7 +25,7 @@ public class CreateBookingHandler(IBookingRepository bookingRepository, IApartme
 
         if (hasBookingConflict)
         {
-            throw new InvalidOperationException("The apartment is already booked for the selected dates.");
+            throw new BookingConflictException("The apartment is already booked for the selected dates.");
         }
 
         var totalNights = request.EndDate.DayNumber - request.StartDate.DayNumber;
