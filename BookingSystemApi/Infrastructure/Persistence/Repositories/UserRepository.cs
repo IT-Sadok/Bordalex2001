@@ -4,7 +4,7 @@ using Dapper;
 using System.Data;
 using System.Runtime.CompilerServices;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Persistence.Repositories;
 
 public class UserRepository(IDbConnection dbConnection) : IUserRepository
 {

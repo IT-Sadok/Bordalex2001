@@ -6,7 +6,7 @@ using Domain.Entities.Common;
 using Domain.Entities.Enums;
 using System.Data;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Persistence.Repositories;
 
 public class ApartmentRepository(IDbConnection dbConnection) : IApartmentRepository
 {

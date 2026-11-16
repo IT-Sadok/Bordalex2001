@@ -4,7 +4,7 @@ using Domain.Entities;
 using Domain.Entities.Common;
 using System.Data;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Persistence.Repositories;
 
 public class BookingRepository(IDbConnection dbConnection) : IBookingRepository
 {

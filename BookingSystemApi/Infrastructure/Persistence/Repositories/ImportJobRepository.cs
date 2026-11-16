@@ -5,7 +5,7 @@ using Domain.Entities.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Persistence.Repositories;
 
 public class ImportJobRepository(IDbConnection dbConnection) : IImportJobRepository
 {
