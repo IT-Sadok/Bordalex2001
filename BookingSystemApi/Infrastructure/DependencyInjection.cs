@@ -1,12 +1,10 @@
-﻿using Application.Common.Mediator.Interfaces;
-using Application.Features.Apartments.Interfaces;
+﻿using Application.Features.Apartments.Interfaces;
 using Application.Features.Bookings.Interfaces;
 using Application.Features.Imports.Interfaces;
 using Application.Features.Users.Interfaces;
 using Application.Imports;
 using Infrastructure.Auth;
 using Infrastructure.Data;
-using Infrastructure.Features.Users.Handlers;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
 using Infrastructure.Imports;
@@ -49,6 +47,8 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddScoped<IUserRegistrationService, UserRegistrationService>();
+        services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
 
         var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
@@ -87,20 +87,6 @@ public static class DependencyInjection
             });
 
         services.AddAuthorization();
-
-        var handlerInterfaceType = typeof(IRequestHandler<,>);
-        var assembly = typeof(LoginUserHandler).Assembly;
-
-        var handlerTypes = assembly.GetTypes()
-            .Where(t => !t.IsAbstract && !t.IsInterface)
-            .SelectMany(t => t.GetInterfaces()
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == handlerInterfaceType)
-                .Select(i => new { HandlerType = t, InterfaceType = i }));
-
-        foreach (var handler in handlerTypes)
-        {
-            services.AddScoped(handler.InterfaceType, handler.HandlerType);
-        }
 
         services.AddScoped<IUserManagerWrapper<AppUser>, UserManagerWrapper>();
         services.AddScoped<IRoleManagerWrapper<IdentityRole>, RoleManagerWrapper>();

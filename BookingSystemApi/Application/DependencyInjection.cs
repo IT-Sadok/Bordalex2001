@@ -10,6 +10,20 @@ public static class DependencyInjection
     {
         services.AddScoped<IRequestExecutor, RequestExecutor>();
 
+        var handlerInterfaceType = typeof(IRequestHandler<,>);
+        var assembly = typeof(DependencyInjection).Assembly;
+
+        var handlerTypes = assembly.GetTypes()
+            .Where(t => !t.IsAbstract && !t.IsInterface)
+            .SelectMany(t => t.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == handlerInterfaceType)
+                .Select(i => new { HandlerType = t, InterfaceType = i }));
+
+        foreach (var handler in handlerTypes)
+        {
+            services.AddScoped(handler.InterfaceType, handler.HandlerType);
+        }
+
         return services;
     }
 }
