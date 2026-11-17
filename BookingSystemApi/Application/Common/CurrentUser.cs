@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.UserContext;
+﻿namespace Application.Common;
 
 public record CurrentUser(string Id, string FullName, string Email, IEnumerable<string> Roles)
 {

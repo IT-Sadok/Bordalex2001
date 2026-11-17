@@ -1,13 +1,12 @@
-﻿using Application.Common.Mediator.Interfaces;
+﻿using Application.Common;
+using Application.Common.Mediator.Interfaces;
 using Application.Features.Bookings.Interfaces;
-using Application.Features.Bookings.Queries;
 using Domain.Entities;
 using Domain.Entities.Common;
-using Infrastructure.UserContext;
 
-namespace Infrastructure.Features.Bookings.Handlers;
+namespace Application.Features.Bookings.Queries.Handlers;
 
-public class GetAllActiveBookingsHandler(IBookingRepository bookingRepository, IUserContext userContext) : IRequestHandler<GetAllActiveBookingsQuery, PagedResult<Booking>>
+public class GetAllActiveBookingsQueryHandler(IBookingRepository bookingRepository, IUserContext userContext) : IRequestHandler<GetAllActiveBookingsQuery, PagedResult<Booking>>
 {
     public async Task<PagedResult<Booking>> HandleAsync(GetAllActiveBookingsQuery request, CancellationToken ct = default)
     {

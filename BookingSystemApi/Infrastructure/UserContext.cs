@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Application.Common;
+using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace Infrastructure.UserContext;
+namespace Infrastructure;
 
 public class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContext
 {

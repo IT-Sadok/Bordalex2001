@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.UserContext;
+﻿namespace Application.Common;
 
 public interface IUserContext
 {

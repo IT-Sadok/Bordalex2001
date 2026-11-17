@@ -1,17 +1,16 @@
-﻿using Application.Common.Exceptions;
+﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.Common.Mediator.Interfaces;
 using Application.Features.Apartments.Interfaces;
-using Application.Features.Bookings.Commands;
 using Application.Features.Bookings.Interfaces;
 using Domain.Entities;
-using Infrastructure.UserContext;
 
-namespace Infrastructure.Features.Bookings.Handlers;
+namespace Application.Features.Bookings.Commands.Handlers;
 
-public class CreateBookingHandler(IBookingRepository bookingRepository, IApartmentRepository apartmentRepository, IUserContext userContext) : IRequestHandler<CreateBookingCommand, Guid>
+public class CreateBookingCommandHandler(IBookingRepository bookingRepository, IApartmentRepository apartmentRepository, IUserContext userContext) : IRequestHandler<CreateBookingCommand, Guid>
 {
-    public async Task<Guid> HandleAsync(CreateBookingCommand request, CancellationToken ct = default) 
-    { 
+    public async Task<Guid> HandleAsync(CreateBookingCommand request, CancellationToken ct = default)
+    {
         var user = userContext.GetCurrentUser() ?? throw new UnauthorizedAccessException("User is not authenticated.");
 
         if (request.EndDate <= request.StartDate)

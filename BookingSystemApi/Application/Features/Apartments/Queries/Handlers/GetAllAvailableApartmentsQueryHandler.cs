@@ -1,10 +1,9 @@
 ﻿using Application.Common.Mediator.Interfaces;
 using Application.Features.Apartments.DTOs;
 using Application.Features.Apartments.Interfaces;
-using Application.Features.Apartments.Queries;
 using Domain.Entities.Common;
 
-namespace Infrastructure.Features.Apartments.Handlers;
+namespace Application.Features.Apartments.Queries.Handlers;
 
 public class GetAllAvailableApartmentsQueryHandler(IApartmentRepository apartmentRepository) : IRequestHandler<GetAllAvailableApartmentsQuery, PagedResult<ApartmentListItemDto>>
 {
