@@ -1,7 +1,7 @@
 ﻿using Application.Features.Users.Commands;
 using Application.Features.Users.Commands.Validators;
 
-namespace Tests.Application.Validators;
+namespace Tests.Application.Features.Users.Commands.Validators;
 
 public class RegisterUserCommandValidatorTests
 {
@@ -85,7 +85,7 @@ public class RegisterUserCommandValidatorTests
         );
 
         var validator = new RegisterUserCommandValidator();
-        
+
         var result = validator.Validate(command);
 
         Assert.False(result.IsValid);
@@ -101,7 +101,7 @@ public class RegisterUserCommandValidatorTests
             "Valid User",
             new DateOnly(1995, 5, 15)
         );
-        
+
         var validator = new RegisterUserCommandValidator();
 
         var result = validator.Validate(command);
@@ -157,7 +157,7 @@ public class RegisterUserCommandValidatorTests
             );
 
         var validator = new RegisterUserCommandValidator();
-        
+
         var result = validator.Validate(command);
 
         Assert.False(result.IsValid);
@@ -221,7 +221,7 @@ public class RegisterUserCommandValidatorTests
     public void RegisterUserCommandValidator_DisplayNameTooLong_FailsValidation()
     {
         var longDisplayName = new string('A', 101);
-        
+
         var command = new RegisterUserCommand(
             "email@email.com",
             "ValidPass123!",

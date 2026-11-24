@@ -1,7 +1,7 @@
 ﻿using Application.Features.Users.Commands;
 using Application.Features.Users.Commands.Validators;
 
-namespace Tests.Application.Validators;
+namespace Tests.Application.Features.Users.Commands.Validators;
 
 public class LoginUserCommandValidatorTests
 {
@@ -27,11 +27,11 @@ public class LoginUserCommandValidatorTests
             "invalidemail",
             "ValidPass123!"
         );
-        
+
         var validator = new LoginUserCommandValidator();
-        
+
         var result = validator.Validate(command);
-        
+
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.PropertyName == "Email");
     }
@@ -61,7 +61,7 @@ public class LoginUserCommandValidatorTests
         );
 
         var validator = new LoginUserCommandValidator();
-        
+
         var result = validator.Validate(command);
 
         Assert.False(result.IsValid);
