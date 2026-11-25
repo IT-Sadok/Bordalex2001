@@ -1,7 +1,7 @@
 ﻿using Application.Features.Imports.DTOs;
 using Application.Features.Imports.Interfaces;
 using Domain.Entities.Enums;
-using Infrastructure.Data;
+using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
