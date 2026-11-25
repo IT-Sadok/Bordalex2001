@@ -23,6 +23,11 @@ public class UserRegistrationService(
             throw new InvalidOperationException("User with this email already exists.");
         }
 
+        if (!await roleManager.RoleExistsAsync(Roles.Client))
+        {
+            throw new InvalidOperationException($"Required role '{Roles.Client}' does not exist.");
+        }
+
         var newUser = new AppUser
         {
             UserName = email,
@@ -36,11 +41,6 @@ public class UserRegistrationService(
         {
             var errors = string.Join("; ", result.Errors.Select(e => e.Description));
             throw new InvalidOperationException($"Failed to create user: {errors}");
-        }
-
-        if (!await roleManager.RoleExistsAsync(Roles.Client))
-        {
-            throw new InvalidOperationException($"Required role '{Roles.Client}' does not exist.");
         }
 
         var addToRoleResult = await userManager.AddToRoleAsync(newUser, Roles.Client);

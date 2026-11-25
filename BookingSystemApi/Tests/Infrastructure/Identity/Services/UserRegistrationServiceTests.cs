@@ -46,6 +46,9 @@ public class UserRegistrationServiceTests
                 It.IsAny<AppUser>(),
                 It.IsAny<string>()),
             Times.Never);
+        _roleManagerMock.Verify(
+            rm => rm.RoleExistsAsync(It.IsAny<string>()),
+            Times.Never);
     }
 
     [Fact]
@@ -106,6 +109,9 @@ public class UserRegistrationServiceTests
         _userManagerMock
             .Setup(um => um.FindByEmailAsync(email))
             .ReturnsAsync((AppUser?)null);
+        _roleManagerMock
+            .Setup(rm => rm.RoleExistsAsync(Roles.Client))
+            .ReturnsAsync(true);
         _userManagerMock
             .Setup(um => um.CreateAsync(It.IsAny<AppUser>(), password))
             .ReturnsAsync(IdentityResult.Failed(
@@ -140,9 +146,6 @@ public class UserRegistrationServiceTests
         _userManagerMock
             .Setup(um => um.FindByEmailAsync(email))
             .ReturnsAsync((AppUser?)null);
-        _userManagerMock
-            .Setup(um => um.CreateAsync(It.IsAny<AppUser>(), password))
-            .ReturnsAsync(IdentityResult.Success);
         _roleManagerMock
             .Setup(rm => rm.RoleExistsAsync(Roles.Client))
             .ReturnsAsync(false);
@@ -155,12 +158,17 @@ public class UserRegistrationServiceTests
                 null,
                 TestContext.Current.CancellationToken));
 
-        Assert.Contains("does not exist", exception.Message);
+        Assert.Equal($"Required role '{Roles.Client}' does not exist.", exception.Message);
 
         _userManagerMock.Verify(
             um => um.AddToRoleAsync(
                 It.IsAny<AppUser>(),
                 Roles.Client),
+            Times.Never);
+        _userManagerMock.Verify(
+            um => um.CreateAsync(
+                It.IsAny<AppUser>(),
+                It.IsAny<string>()),
             Times.Never);
     }
 
